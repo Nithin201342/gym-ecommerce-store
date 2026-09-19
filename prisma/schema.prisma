@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProductType {
+  EQUIPMENT
+  SUPPLEMENT
+  ACCESSORY
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String? // null for OAuth-only users
+  image         String?
+  role          Role      @default(USER)
+
+  accounts Account[]
+  sessions Session[]
+  orders   Order[]
+  cart     Cart?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Category {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String      @unique
+  description String
+  // Money stored as integer cents — avoids floating-point rounding errors.
+  // $49.99 is stored as 4999. Format for display at the UI layer.
+  priceCents  Int
+  compareAtPriceCents Int?
+  images      String[]
+  stock       Int         @default(0)
+  type        ProductType
+  isActive    Boolean     @default(true)
+  isFeatured  Boolean     @default(false)
+
+  categoryId String   @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  equipmentDetails  EquipmentDetails?
+  supplementDetails SupplementDetails?
+
+  // Flexible catch-all for anything not explicitly modeled (color options, warranty notes, etc.)
+  specifications Json?
+
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([categoryId])
+}
+
+model EquipmentDetails {
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  productId        String  @unique @db.ObjectId
+  product          Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  material         String?
+  dimensions       String? // e.g. "120x60x150 cm"
+  weightKg         Float?
+  maxUserWeightKg  Float?
+  warrantyMonths   Int?
+  assemblyRequired Boolean @default(false)
+}
+
+model SupplementDetails {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId            String    @unique @db.ObjectId
+  product              Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  servingSize          String?
+  servingsPerContainer Int?
+  flavor               String?
+  ingredients          String?
+  nutritionFacts       Json? // { calories, protein_g, carbs_g, fat_g, sugar_g, ... }
+  allergenInfo         String?
+  expiryDate           DateTime?
+}
+
+model Cart {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String     @unique @db.ObjectId
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  cartId    String  @db.ObjectId
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id     String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId String      @db.ObjectId
+  user   User        @relation(fields: [userId], references: [id])
+  status OrderStatus @default(PENDING)
+  items  OrderItem[]
+
+  subtotalCents    Int
+  taxCents         Int @default(0)
+  shippingFeeCents Int @default(0)
+  totalCents       Int
+
+  stripeSessionId       String? @unique
+  stripePaymentIntentId String? @unique
+
+  shippingName    String
+  shippingAddress String
+  shippingCity    String
+  shippingState   String
+  shippingZip     String
+  shippingCountry String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String @db.ObjectId
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Reference kept for analytics/reporting, but NOT relied on for display —
+  // the fields below are a snapshot taken at purchase time so order history
+  // stays accurate even if the product is later edited, discontinued, or deleted.
+  productId            String  @db.ObjectId
+  product              Product @relation(fields: [productId], references: [id])
+  productNameSnapshot  String
+  productImageSnapshot String?
+  quantity             Int
+  priceAtPurchaseCents Int
+}
