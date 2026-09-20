@@ -13,15 +13,15 @@ export default async function CartPage() {
     if (!cart) {
         return (
             <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-                <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-10">
+                <div className="overflow-hidden rounded-[28px] border border-neutral-200 bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-10">
                     <div className="mx-auto max-w-2xl text-center">
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-400">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-600">
                             <ShoppingBag size={28} />
                         </div>
-                        <h1 className="mt-6 text-3xl font-semibold text-white">
+                        <h1 className="mt-6 text-3xl font-semibold text-neutral-950">
                             Your cart is waiting for its next upgrade
                         </h1>
-                        <p className="mt-3 text-neutral-300">
+                        <p className="mt-3 text-neutral-600">
                             Sign in to keep your gear saved and build a routine that keeps
                             getting stronger.
                         </p>
@@ -34,7 +34,7 @@ export default async function CartPage() {
                             </Link>
                             <Link
                                 href="/products"
-                                className="inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-colors hover:border-white/25 hover:bg-white/10"
+                                className="inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white px-6 py-3 text-sm font-medium text-neutral-800 transition-colors hover:border-neutral-300 hover:bg-neutral-50"
                             >
                                 Browse products
                             </Link>
@@ -42,7 +42,7 @@ export default async function CartPage() {
                     </div>
 
                     <div className="mt-12">
-                        <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-300">
+                        <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
                             <Sparkles size={15} className="text-emerald-400" />
                             Recommended for your routine
                         </div>
@@ -60,15 +60,15 @@ export default async function CartPage() {
     if (cart.items.length === 0) {
         return (
             <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-                <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-10">
+                <div className="overflow-hidden rounded-[28px] border border-neutral-200 bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-10">
                     <div className="mx-auto max-w-2xl text-center">
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-400">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-600">
                             <ShoppingBag size={28} />
                         </div>
-                        <h1 className="mt-6 text-3xl font-semibold text-white">
+                        <h1 className="mt-6 text-3xl font-semibold text-neutral-950">
                             Your cart is empty
                         </h1>
-                        <p className="mt-3 text-neutral-300">
+                        <p className="mt-3 text-neutral-600">
                             Start with essentials that support recovery, performance, and every
                             day consistency.
                         </p>
@@ -81,7 +81,7 @@ export default async function CartPage() {
                     </div>
 
                     <div className="mt-12">
-                        <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-300">
+                        <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
                             <Sparkles size={15} className="text-emerald-400" />
                             Popular picks
                         </div>
@@ -137,12 +137,12 @@ export default async function CartPage() {
                         </div>
                         <div className="flex items-center justify-between gap-3">
                             <span>Shipping</span>
-                            <span className="text-emerald-400">Calculated at checkout</span>
+                            <span className="text-emerald-700">Calculated at checkout</span>
                         </div>
                     </div>
 
-                    <div className="mt-6 rounded-2xl border border-emerald-400/20 bg-emerald-500/5 p-4 text-sm text-neutral-200">
-                        <div className="flex items-center gap-2 font-medium text-emerald-300">
+                    <div className="mt-6 rounded-2xl border border-emerald-400/30 bg-emerald-50 p-4 text-sm text-neutral-800">
+                        <div className="flex items-center gap-2 font-medium text-emerald-700">
                             <Truck size={16} />
                             Fast delivery
                         </div>

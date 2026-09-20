@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
 import { auth } from "@/../auth";
 import { fulfillPaidOrder, getOrderForUser } from "@/lib/orders";
@@ -38,6 +39,8 @@ export default async function CheckoutSuccessPage({
       stripeSession.payment_status === "paid"
     ) {
       await fulfillPaidOrder(order.id, paymentIntentId);
+      revalidatePath("/", "layout");
+      revalidatePath("/cart");
       order = await getOrderForUser(orderId, session.user.id);
       if (!order) notFound();
     }
