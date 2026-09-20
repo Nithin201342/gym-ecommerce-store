@@ -7,16 +7,16 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold text-white">Categories</h1>
+      <h1 className="mb-6 text-2xl font-semibold text-neutral-900">Categories</h1>
 
       <div className="mb-8">
         <CategoryForm />
       </div>
 
-      <FadeIn className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
-        <table className="w-full text-sm">
+      <FadeIn className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_15px_35px_rgba(17,17,17,0.04)]">
+        <table className="w-full min-w-[600px] text-sm">
           <thead>
-            <tr className="border-b border-white/10 text-left text-neutral-400">
+            <tr className="border-b border-neutral-200 text-left text-neutral-500">
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Slug</th>
               <th className="px-4 py-3 font-medium">Description</th>
@@ -26,11 +26,11 @@ export default async function AdminCategoriesPage() {
             {categories.map((c) => (
               <tr
                 key={c.id}
-                className="border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.03]"
+                className="border-b border-neutral-200 transition-colors last:border-0 hover:bg-neutral-50"
               >
-                <td className="px-4 py-3 text-white">{c.name}</td>
-                <td className="px-4 py-3 text-neutral-400">{c.slug}</td>
-                <td className="px-4 py-3 text-neutral-400">
+                <td className="px-4 py-3 font-medium text-neutral-900">{c.name}</td>
+                <td className="px-4 py-3 text-neutral-600">{c.slug}</td>
+                <td className="px-4 py-3 text-neutral-600">
                   {c.description ?? "—"}
                 </td>
               </tr>

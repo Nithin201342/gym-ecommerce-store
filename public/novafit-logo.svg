@@ -1,0 +1,17 @@
+<svg width="768" height="300" viewBox="0 0 768 300" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">NovaFit dumbbell logo</title>
+  <desc id="desc">A black dumbbell logo</desc>
+  <g fill="#272729">
+    <rect x="202" y="133" width="364" height="34" rx="17"/>
+    <path d="M59 117C70 112 82 112 94 116L105 123V177L94 184C82 188 70 188 59 183L48 169V131L59 117Z"/>
+    <path d="M113 77C128 71 143 72 158 80L177 94V206L158 220C143 228 128 229 113 223L96 205V95L113 77Z"/>
+    <path d="M170 43C190 35 211 37 231 49L249 68V232L231 251C211 263 190 265 170 257L151 236V64L170 43Z"/>
+    <path d="M709 117C698 112 686 112 674 116L663 123V177L674 184C686 188 698 188 709 183L720 169V131L709 117Z"/>
+    <path d="M655 77C640 71 625 72 610 80L591 94V206L610 220C625 228 640 229 655 223L672 205V95L655 77Z"/>
+    <path d="M598 43C578 35 557 37 537 49L519 68V232L537 251C557 263 578 265 598 257L617 236V64L598 43Z"/>
+  </g>
+  <g fill="#FAFAFA">
+    <rect x="205" y="140" width="358" height="7" rx="3.5"/>
+    <rect x="205" y="153" width="358" height="7" rx="3.5"/>
+  </g>
+</svg>

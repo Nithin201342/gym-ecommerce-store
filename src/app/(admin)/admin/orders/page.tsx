@@ -18,12 +18,12 @@ export default async function AdminOrdersPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold text-white">Orders</h1>
+      <h1 className="mb-6 text-2xl font-semibold text-neutral-900">Orders</h1>
 
-      <FadeIn className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
-        <table className="w-full text-sm">
+      <FadeIn className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white shadow-[0_15px_35px_rgba(17,17,17,0.04)]">
+        <table className="w-full min-w-[640px] text-sm">
           <thead>
-            <tr className="border-b border-white/10 text-left text-neutral-400">
+            <tr className="border-b border-neutral-200 text-left text-neutral-500">
               <th className="px-4 py-3 font-medium">Order</th>
               <th className="px-4 py-3 font-medium">Customer</th>
               <th className="px-4 py-3 font-medium">Total</th>
@@ -35,20 +35,20 @@ export default async function AdminOrdersPage() {
             {orders.map((o) => (
               <tr
                 key={o.id}
-                className="border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.03]"
+                className="border-b border-neutral-200 transition-colors last:border-0 hover:bg-neutral-50"
               >
                 <td className="px-4 py-3">
                   <Link
                     href={`/admin/orders/${o.id}`}
-                    className="text-emerald-400 hover:underline"
+                    className="font-medium text-emerald-700 hover:underline"
                   >
                     #{o.id.slice(-8).toUpperCase()}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-neutral-300">
+                <td className="px-4 py-3 text-neutral-700">
                   {o.user.name ?? o.user.email}
                 </td>
-                <td className="px-4 py-3 text-neutral-300">
+                <td className="px-4 py-3 text-neutral-700">
                   {formatCents(o.totalCents)}
                 </td>
                 <td className="px-4 py-3">

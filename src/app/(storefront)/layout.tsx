@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
 import { getCartItemCount } from "@/lib/cart";
 
 export default async function StorefrontLayout({
@@ -13,6 +14,7 @@ export default async function StorefrontLayout({
     <>
       <Navbar cartCount={cartCount} />
       <main className="flex-1">{children}</main>
+      <Footer />
     </>
   );
 }

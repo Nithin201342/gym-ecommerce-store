@@ -60,20 +60,19 @@ export function StatsGrid({
         <motion.div
           key={stat.label}
           variants={item}
-          className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl transition-colors hover:border-white/20"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-[0_15px_35px_rgba(17,17,17,0.04)] transition-colors hover:border-neutral-300"
         >
           <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-wide text-neutral-500">
+            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-neutral-500">
               {stat.label}
             </p>
             <stat.icon
-              className={`h-4 w-4 ${stat.warn ? "text-amber-400" : "text-emerald-400/70"}`}
+              className={`h-4 w-4 ${stat.warn ? "text-amber-500" : "text-emerald-600"}`}
             />
           </div>
           <p
-            className={`mt-2 text-2xl font-semibold ${
-              stat.warn ? "text-amber-400" : "text-white"
-            }`}
+            className={`mt-3 text-3xl font-semibold tracking-tight ${stat.warn ? "text-amber-600" : "text-neutral-900"
+              }`}
           >
             {stat.value}
           </p>

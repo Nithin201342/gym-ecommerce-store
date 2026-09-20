@@ -50,6 +50,8 @@ export type ProductActionInput = {
   categoryId: string;
   isActive: boolean;
   isFeatured: boolean;
+  variantOfProductId: string | null;
+  color: string | null;
   equipment: EquipmentInput;
   supplement: SupplementInput;
 };
@@ -74,6 +76,31 @@ function supplementCreateData(s: SupplementInput) {
     allergenInfo: s?.allergenInfo,
     nutritionFacts: nutritionFactsFromInput(s),
   };
+}
+
+async function resolveVariantGroup(
+  productId: string,
+  variantOfProductId: string | null
+) {
+  if (!variantOfProductId) return null;
+  if (variantOfProductId === productId) {
+    throw new Error("A product cannot be its own variant.");
+  }
+
+  const baseProduct = await prisma.product.findUnique({
+    where: { id: variantOfProductId },
+    select: { id: true, slug: true, variantGroup: true },
+  });
+  if (!baseProduct) throw new Error("The selected variant product was not found.");
+
+  const group = baseProduct.variantGroup ?? baseProduct.slug;
+  if (!baseProduct.variantGroup) {
+    await prisma.product.update({
+      where: { id: baseProduct.id },
+      data: { variantGroup: group },
+    });
+  }
+  return group;
 }
 
 function validateBasics(input: ProductActionInput): string | null {
@@ -107,6 +134,7 @@ export async function createProduct(
   }
 
   try {
+    const variantGroup = await resolveVariantGroup("", input.variantOfProductId);
     await prisma.product.create({
       data: {
         name: input.name,
@@ -122,16 +150,18 @@ export async function createProduct(
         type: input.type,
         isActive: input.isActive,
         isFeatured: input.isFeatured,
+        variantGroup,
+        color: input.color?.trim() || null,
         categoryId: input.categoryId,
         ...(input.type === "EQUIPMENT" && input.equipment
           ? { equipmentDetails: { create: input.equipment } }
           : {}),
         ...(input.type === "SUPPLEMENT" && input.supplement
           ? {
-              supplementDetails: {
-                create: supplementCreateData(input.supplement),
-              },
-            }
+            supplementDetails: {
+              create: supplementCreateData(input.supplement),
+            },
+          }
           : {}),
       },
     });
@@ -165,6 +195,7 @@ export async function updateProduct(
 
   try {
     const supplementData = supplementCreateData(input.supplement);
+    const variantGroup = await resolveVariantGroup(productId, input.variantOfProductId);
 
     await prisma.product.update({
       where: { id: productId },
@@ -182,20 +213,22 @@ export async function updateProduct(
         type: input.type,
         isActive: input.isActive,
         isFeatured: input.isFeatured,
+        variantGroup,
+        color: input.color?.trim() || null,
         categoryId: input.categoryId,
         ...(input.type === "EQUIPMENT" && input.equipment
           ? {
-              equipmentDetails: {
-                upsert: { create: input.equipment, update: input.equipment },
-              },
-            }
+            equipmentDetails: {
+              upsert: { create: input.equipment, update: input.equipment },
+            },
+          }
           : {}),
         ...(input.type === "SUPPLEMENT" && input.supplement
           ? {
-              supplementDetails: {
-                upsert: { create: supplementData, update: supplementData },
-              },
-            }
+            supplementDetails: {
+              upsert: { create: supplementData, update: supplementData },
+            },
+          }
           : {}),
       },
     });
@@ -228,6 +261,61 @@ export async function toggleProductActive(
   revalidatePath("/admin/products");
   revalidatePath("/products");
   revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function updateUser(
+  userId: string,
+  input: { name: string; email: string; role: "USER" | "ADMIN" }
+): Promise<ActionResult> {
+  const check = await requireAdmin();
+  if (check !== true) return check;
+
+  const session = await auth();
+  if (session?.user?.id === userId && input.role !== "ADMIN") {
+    return { ok: false, error: "You cannot remove your own admin access." };
+  }
+
+  const name = input.name.trim();
+  const email = input.email.trim().toLowerCase();
+  if (name.length < 2) return { ok: false, error: "Name is required." };
+  if (!email || !email.includes("@")) {
+    return { ok: false, error: "Enter a valid email address." };
+  }
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing && existing.id !== userId) {
+    return { ok: false, error: "Another user already uses this email." };
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { name, email, role: input.role },
+  });
+  revalidatePath("/admin/users");
+  return { ok: true };
+}
+
+export async function toggleUserBlocked(
+  userId: string,
+  isBlocked: boolean
+): Promise<ActionResult> {
+  const check = await requireAdmin();
+  if (check !== true) return check;
+
+  const session = await auth();
+  if (session?.user?.id === userId) {
+    return { ok: false, error: "You cannot block your own account." };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (!user) return { ok: false, error: "User not found." };
+
+  await prisma.user.update({ where: { id: userId }, data: { isBlocked } });
+  revalidatePath("/admin/users");
   return { ok: true };
 }
 

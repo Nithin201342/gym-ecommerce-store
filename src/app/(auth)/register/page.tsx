@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { ArrowRight, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { AuthShell } from "@/components/auth/auth-shell";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -50,28 +52,26 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-neutral-950 px-4">
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-emerald-500/20 blur-[120px]" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-[100px]" />
-
-      <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Create your account
-          </h1>
-          <p className="mt-1 text-sm text-neutral-400">
-            Join to track orders and save your cart
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="name"
-              className="mb-1.5 block text-sm text-neutral-300"
-            >
-              Full name
-            </label>
+    <AuthShell
+      eyebrow="Start your training era"
+      title="Make the first rep count."
+      description="Create your account to save your cart, track every order, and build a setup that keeps pace with you."
+      footer={
+        <p className="text-center text-sm text-neutral-500">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-emerald-700 hover:text-emerald-800">
+            Sign in
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label htmlFor="name" className="mb-2 block text-sm font-medium text-neutral-800">
+            Full name
+          </label>
+          <div className="relative">
+            <UserRound className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <input
               id="name"
               type="text"
@@ -79,36 +79,36 @@ export default function RegisterPage() {
               minLength={2}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-neutral-500 outline-none transition focus:border-emerald-400/50 focus:bg-white/10 focus:ring-2 focus:ring-emerald-400/20"
+              className="w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-3 pl-10 text-sm text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-600/10"
               placeholder="Jane Doe"
             />
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-1.5 block text-sm text-neutral-300"
-            >
-              Email
-            </label>
+        <div>
+          <label htmlFor="email" className="mb-2 block text-sm font-medium text-neutral-800">
+            Email address
+          </label>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-neutral-500 outline-none transition focus:border-emerald-400/50 focus:bg-white/10 focus:ring-2 focus:ring-emerald-400/20"
+              className="w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-3 pl-10 text-sm text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-600/10"
               placeholder="you@example.com"
             />
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-1.5 block text-sm text-neutral-300"
-            >
-              Password
-            </label>
+        <div>
+          <label htmlFor="password" className="mb-2 block text-sm font-medium text-neutral-800">
+            Password
+          </label>
+          <div className="relative">
+            <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <input
               id="password"
               type="password"
@@ -116,33 +116,27 @@ export default function RegisterPage() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-neutral-500 outline-none transition focus:border-emerald-400/50 focus:bg-white/10 focus:ring-2 focus:ring-emerald-400/20"
+              className="w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-3 pl-10 text-sm text-neutral-950 outline-none transition placeholder:text-neutral-400 focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-600/10"
               placeholder="At least 8 characters"
             />
           </div>
+        </div>
 
-          {error && (
-            <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
-              {error}
-            </p>
-          )}
+        {error && (
+          <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+            {error}
+          </p>
+        )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-emerald-500 px-4 py-2.5 font-medium text-neutral-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading ? "Creating account..." : "Create account"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-neutral-400">
-          Already have an account?{" "}
-          <Link href="/login" className="text-emerald-400 hover:underline">
-            Sign in
-          </Link>
-        </p>
-      </div>
-    </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="group flex w-full items-center justify-center gap-2 rounded-xl bg-neutral-950 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Creating account..." : "Create your account"}
+          {!loading && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />}
+        </button>
+      </form>
+    </AuthShell>
   );
 }

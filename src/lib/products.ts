@@ -46,6 +46,23 @@ export function getProductBySlug(slug: string) {
   });
 }
 
+export function getProductVariants(variantGroup: string | null) {
+  if (!variantGroup) return Promise.resolve([]);
+
+  return prisma.product.findMany({
+    where: { variantGroup, ...activeProductWhere },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      color: true,
+      images: true,
+      stock: true,
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
 export type ProductWithDetails = NonNullable<
   Awaited<ReturnType<typeof getProductBySlug>>
 >;

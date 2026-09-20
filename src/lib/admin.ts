@@ -15,9 +15,32 @@ export function getAdminProductById(id: string) {
   });
 }
 
+export function getAdminProductChoices(excludeId?: string) {
+  return prisma.product.findMany({
+    where: excludeId ? { id: { not: excludeId } } : undefined,
+    select: { id: true, name: true, type: true, variantGroup: true },
+    orderBy: { name: "asc" },
+  });
+}
+
 export function getAdminOrders() {
   return prisma.order.findMany({
     include: { items: true, user: { select: { name: true, email: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export function getAdminUsers() {
+  return prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isBlocked: true,
+      createdAt: true,
+      _count: { select: { orders: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 }

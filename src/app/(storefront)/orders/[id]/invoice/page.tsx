@@ -26,7 +26,7 @@ export default async function InvoicePage({
             <article className="invoice-sheet rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-10">
                 <header className="flex flex-col justify-between gap-6 border-b border-neutral-200 pb-8 sm:flex-row">
                     <div>
-                        <p className="text-xl font-bold text-neutral-950">Iron &amp; Fuel</p>
+                        <p className="text-xl font-bold text-neutral-950">NovaFit</p>
                         <p className="mt-2 text-sm text-neutral-600">Premium training essentials</p>
                     </div>
                     <div className="sm:text-right">

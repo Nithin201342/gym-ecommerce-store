@@ -14,7 +14,7 @@ function slugify(value: string) {
 }
 
 const inputClass =
-  "rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition focus:border-emerald-400/50 focus:bg-white/10 focus:ring-2 focus:ring-emerald-400/20";
+  "rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
 
 export function CategoryForm() {
   const router = useRouter();
@@ -45,9 +45,9 @@ export function CategoryForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl"
+      className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-[0_15px_35px_rgba(17,17,17,0.04)]"
     >
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-400">
+      <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.12em] text-neutral-500">
         New category
       </h2>
       <div className="grid gap-4 sm:grid-cols-3">
@@ -78,7 +78,7 @@ export function CategoryForm() {
           className={inputClass}
         />
       </div>
-      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       <button
         type="submit"
         disabled={isPending}

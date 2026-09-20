@@ -36,6 +36,7 @@ model User {
   password      String? // null for OAuth-only users
   image         String?
   role          Role      @default(USER)
+  isBlocked     Boolean   @default(false)
 
   accounts Account[]
   sessions Session[]
@@ -107,6 +108,8 @@ model Product {
   type        ProductType
   isActive    Boolean     @default(true)
   isFeatured  Boolean     @default(false)
+  variantGroup String?
+  color        String?
 
   categoryId String   @db.ObjectId
   category   Category @relation(fields: [categoryId], references: [id])
@@ -125,6 +128,7 @@ model Product {
 
   @@index([type])
   @@index([categoryId])
+  @@index([variantGroup])
 }
 
 model EquipmentDetails {

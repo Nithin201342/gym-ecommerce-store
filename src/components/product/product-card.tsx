@@ -14,12 +14,12 @@ export function ProductCard({ product }: { product: ProductListItem }) {
       href={`/products/${product.slug}`}
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-xl"
     >
-      <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
+      <div className="relative aspect-square w-full overflow-hidden bg-neutral-100 p-3 sm:p-4">
         <ProductImage
           src={image}
           alt={product.name}
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-contain"
         />
 
         {onSale && (

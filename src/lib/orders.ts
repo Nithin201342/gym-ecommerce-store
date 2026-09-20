@@ -1,5 +1,4 @@
 import "server-only";
-import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 /** Always scope by userId — never let one user fetch another's order by guessing an id. */
@@ -66,8 +65,5 @@ export async function fulfillPaidOrder(
   });
 
   if (!fulfilled) return false;
-
-  revalidatePath("/cart");
-  revalidatePath("/", "layout");
   return true;
 }

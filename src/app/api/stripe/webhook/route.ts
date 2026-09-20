@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { fulfillPaidOrder } from "@/lib/orders";
@@ -43,7 +44,11 @@ export async function POST(req: Request) {
         ? session.payment_intent
         : session.payment_intent?.id;
 
-    await fulfillPaidOrder(orderId, paymentIntentId);
+    const fulfilled = await fulfillPaidOrder(orderId, paymentIntentId);
+    if (fulfilled) {
+      revalidatePath("/cart");
+      revalidatePath("/", "layout");
+    }
   }
 
   return NextResponse.json({ received: true });

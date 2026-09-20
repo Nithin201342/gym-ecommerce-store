@@ -1,8 +1,11 @@
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/products";
+import { getProductBySlug, getProductVariants, getProducts } from "@/lib/products";
 import { formatCents } from "@/lib/format";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
 import { ProductImage } from "@/components/product/product-image";
+import { ProductVariantPicker } from "@/components/product/product-variant-picker";
+import { ProductCard } from "@/components/product/product-card";
+import Link from "next/link";
 
 export default async function ProductDetailPage({
   params,
@@ -13,6 +16,15 @@ export default async function ProductDetailPage({
   const product = await getProductBySlug(slug);
 
   if (!product) notFound();
+
+  const variants = await getProductVariants(product.variantGroup);
+  const relatedProducts = await getProducts({
+    categorySlug: product.category.slug,
+  });
+
+  const suggestions = relatedProducts
+    .filter((item) => item.id !== product.id && item.slug !== product.slug)
+    .slice(0, 4);
 
   const image = product.images[0];
   const onSale =
@@ -27,6 +39,7 @@ export default async function ProductDetailPage({
             src={image}
             alt={product.name}
             sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-contain"
             priority
           />
         </div>
@@ -53,6 +66,8 @@ export default async function ProductDetailPage({
           <p className="mt-6 whitespace-pre-line text-neutral-700">
             {product.description}
           </p>
+
+          <ProductVariantPicker variants={variants} currentSlug={product.slug} />
 
           <div className="mt-6">
             <AddToCartButton
@@ -136,6 +151,36 @@ export default async function ProductDetailPage({
           )}
         </div>
       </div>
+
+      {suggestions.length > 0 && (
+        <section className="mt-16 border-t border-neutral-200 pt-12">
+          <div className="mb-7 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
+                Build your setup
+              </p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-950">
+                Complete your routine
+              </h2>
+              <p className="mt-2 max-w-xl text-sm text-neutral-600">
+                Pair your selection with more essentials from the {product.category.name.toLowerCase()} collection.
+              </p>
+            </div>
+            <Link
+              href={`/category/${product.category.slug}`}
+              className="hidden rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-800 transition-colors hover:border-neutral-400 hover:bg-neutral-50 sm:inline-flex"
+            >
+              View collection
+            </Link>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {suggestions.map((item) => (
+              <ProductCard key={item.id} product={item} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

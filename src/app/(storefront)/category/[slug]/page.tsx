@@ -17,16 +17,16 @@ export default async function CategoryPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-white">{category.name}</h1>
+        <h1 className="text-2xl font-semibold text-neutral-950">{category.name}</h1>
         {category.description && (
-          <p className="mt-1 max-w-2xl text-sm text-neutral-400">
+          <p className="mt-1 max-w-2xl text-sm text-neutral-600">
             {category.description}
           </p>
         )}
       </div>
 
       {products.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center text-neutral-400 backdrop-blur-xl">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-12 text-center text-neutral-600 shadow-sm">
           No products in this category yet.
         </div>
       ) : (

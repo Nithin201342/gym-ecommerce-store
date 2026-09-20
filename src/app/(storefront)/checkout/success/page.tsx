@@ -48,7 +48,7 @@ export default async function CheckoutSuccessPage({
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
       <OrderStatusRefresh pending={!isPaid} />
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-sm">
         <div
           className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${isPaid ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-300"
             }`}
@@ -56,10 +56,10 @@ export default async function CheckoutSuccessPage({
           {isPaid ? "✓" : "…"}
         </div>
 
-        <h1 className="text-2xl font-semibold text-white">
+        <h1 className="text-2xl font-semibold text-neutral-950">
           {isPaid ? "Order confirmed" : "Finishing up your order"}
         </h1>
-        <p className="mt-2 text-neutral-400">
+        <p className="mt-2 text-neutral-700">
           {isPaid
             ? `Thanks, ${order.shippingName.split(" ")[0]} — your order is confirmed.`
             : "Payment is processing. This usually takes just a few seconds."}
@@ -68,30 +68,30 @@ export default async function CheckoutSuccessPage({
         <div className="mt-8 space-y-3 text-left">
           {order.items.map((item) => (
             <div key={item.id} className="flex justify-between text-sm">
-              <span className="text-neutral-300">
+              <span className="text-neutral-800">
                 {item.productNameSnapshot}{" "}
-                <span className="text-neutral-500">×{item.quantity}</span>
+                <span className="text-neutral-600">×{item.quantity}</span>
               </span>
-              <span className="text-neutral-200">
+              <span className="font-medium text-neutral-950">
                 {formatCents(item.priceAtPurchaseCents * item.quantity)}
               </span>
             </div>
           ))}
         </div>
 
-        <div className="mt-6 flex justify-between border-t border-white/10 pt-4 text-base font-semibold text-white">
+        <div className="mt-6 flex justify-between border-t border-neutral-200 pt-4 text-base font-semibold text-neutral-950">
           <span>Total</span>
           <span>{formatCents(order.totalCents)}</span>
         </div>
 
-        <p className="mt-2 text-xs text-neutral-500">
+        <p className="mt-2 text-xs text-neutral-600">
           Order #{order.id.slice(-8).toUpperCase()} · shipping to{" "}
           {order.shippingAddress}, {order.shippingCity}
         </p>
 
         <Link
           href="/products"
-          className="mt-8 inline-block rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
+          className="mt-8 inline-block rounded-lg border border-neutral-300 bg-white px-6 py-3 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50"
         >
           Continue shopping
         </Link>

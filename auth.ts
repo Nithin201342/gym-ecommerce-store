@@ -23,7 +23,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const { email, password } = parsed.data;
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user?.password) return null;
+        if (!user?.password || user.isBlocked) return null;
 
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
@@ -43,6 +43,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id as string;
         token.role = (user as { role: Role }).role;
+        token.isBlocked = false;
+      } else if (token.id) {
+        const currentUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true, isBlocked: true },
+        });
+        token.role = currentUser?.role ?? ("USER" as Role);
+        token.isBlocked = currentUser?.isBlocked ?? true;
       }
       return token;
     },
@@ -50,6 +58,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as Role;
+        session.user.isBlocked = Boolean(token.isBlocked);
       }
       return session;
     },

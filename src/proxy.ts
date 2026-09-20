@@ -5,8 +5,9 @@ export default auth((req) => {
   const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
   const isLoggedIn = !!req.auth;
   const isAdmin = req.auth?.user?.role === "ADMIN";
+  const isBlocked = req.auth?.user?.isBlocked === true;
 
-  if (isAdminRoute && (!isLoggedIn || !isAdmin)) {
+  if (isBlocked || (isAdminRoute && (!isLoggedIn || !isAdmin))) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 

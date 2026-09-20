@@ -7,7 +7,14 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold text-white">Dashboard</h1>
+      <div className="mb-8">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-neutral-500">
+          Overview
+        </p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-900">
+          Dashboard
+        </h1>
+      </div>
 
       <StatsGrid
         totalProducts={stats.totalProducts.toString()}

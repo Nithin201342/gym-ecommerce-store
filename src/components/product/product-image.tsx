@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 export function ProductImage({
@@ -8,7 +7,7 @@ export function ProductImage({
     alt,
     sizes,
     priority = false,
-    className = "object-cover",
+    className = "object-contain",
 }: {
     src?: string;
     alt: string;
@@ -21,19 +20,18 @@ export function ProductImage({
     if (!src || failed) {
         return (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-100 via-white to-neutral-200 text-center text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
-                <span>Iron &amp; Fuel</span>
+                <span>NovaFit</span>
             </div>
         );
     }
 
     return (
-        <Image
+        <img
             src={src}
             alt={alt}
-            fill
-            sizes={sizes}
-            className={className}
-            priority={priority}
+            className={`h-full w-full ${className}`}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
             onError={() => setFailed(true)}
         />
     );

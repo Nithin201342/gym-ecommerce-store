@@ -20,6 +20,8 @@ type InitialProduct = {
   isActive: boolean;
   isFeatured: boolean;
   categoryId: string;
+  variantGroup: string | null;
+  color: string | null;
   equipmentDetails: {
     material: string | null;
     dimensions: string | null;
@@ -38,6 +40,13 @@ type InitialProduct = {
   } | null;
 };
 
+type ProductChoice = {
+  id: string;
+  name: string;
+  type: ProductType;
+  variantGroup: string | null;
+};
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -53,12 +62,12 @@ function toNum(s: string): number | undefined {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition focus:border-emerald-400/50 focus:bg-white/10 focus:ring-2 focus:ring-emerald-400/20";
+  "w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-400">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-[0_15px_35px_rgba(17,17,17,0.04)]">
+      <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.12em] text-neutral-500">
         {title}
       </h2>
       <div className="space-y-4">{children}</div>
@@ -69,7 +78,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm text-neutral-300">{label}</label>
+      <label className="mb-1.5 block text-sm font-medium text-neutral-700">{label}</label>
       {children}
     </div>
   );
@@ -77,9 +86,11 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 export function ProductForm({
   categories,
+  productChoices,
   initialProduct,
 }: {
   categories: Category[];
+  productChoices: ProductChoice[];
   initialProduct?: InitialProduct;
 }) {
   const router = useRouter();
@@ -115,6 +126,17 @@ export function ProductForm({
   const [isFeatured, setIsFeatured] = useState(
     initialProduct?.isFeatured ?? false
   );
+  const [variantOfProductId, setVariantOfProductId] = useState(() => {
+    if (!initialProduct?.variantGroup) return "";
+    return (
+      productChoices.find(
+        (product) =>
+          product.variantGroup === initialProduct.variantGroup &&
+          product.id !== initialProduct.id
+      )?.id ?? ""
+    );
+  });
+  const [color, setColor] = useState(initialProduct?.color ?? "");
 
   // Equipment fields
   const [material, setMaterial] = useState(
@@ -190,31 +212,33 @@ export function ProductForm({
       categoryId,
       isActive,
       isFeatured,
+      variantOfProductId: variantOfProductId || null,
+      color: color.trim() || null,
       equipment:
         type === "EQUIPMENT"
           ? {
-              material: material || undefined,
-              dimensions: dimensions || undefined,
-              weightKg: toNum(weightKg),
-              maxUserWeightKg: toNum(maxUserWeightKg),
-              warrantyMonths: toNum(warrantyMonths),
-              assemblyRequired,
-            }
+            material: material || undefined,
+            dimensions: dimensions || undefined,
+            weightKg: toNum(weightKg),
+            maxUserWeightKg: toNum(maxUserWeightKg),
+            warrantyMonths: toNum(warrantyMonths),
+            assemblyRequired,
+          }
           : null,
       supplement:
         type === "SUPPLEMENT"
           ? {
-              servingSize: servingSize || undefined,
-              servingsPerContainer: toNum(servingsPerContainer),
-              flavor: flavor || undefined,
-              ingredients: ingredients || undefined,
-              allergenInfo: allergenInfo || undefined,
-              calories: toNum(calories),
-              proteinG: toNum(proteinG),
-              carbsG: toNum(carbsG),
-              fatG: toNum(fatG),
-              sugarG: toNum(sugarG),
-            }
+            servingSize: servingSize || undefined,
+            servingsPerContainer: toNum(servingsPerContainer),
+            flavor: flavor || undefined,
+            ingredients: ingredients || undefined,
+            allergenInfo: allergenInfo || undefined,
+            calories: toNum(calories),
+            proteinG: toNum(proteinG),
+            carbsG: toNum(carbsG),
+            fatG: toNum(fatG),
+            sugarG: toNum(sugarG),
+          }
           : null,
     };
 
@@ -271,6 +295,24 @@ export function ProductForm({
             className={inputClass}
           />
         </Field>
+
+        {imageUrl && (
+          <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 p-3">
+            <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">
+              Preview
+            </p>
+            <div className="relative h-32 w-32 overflow-hidden rounded-lg border border-neutral-200 bg-white">
+              <img
+                src={imageUrl}
+                alt={name || "Product preview"}
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+          </div>
+        )}
       </Section>
 
       <Section title="Pricing & inventory">
@@ -315,7 +357,7 @@ export function ProductForm({
               className={inputClass}
             >
               {categories.map((c) => (
-                <option key={c.id} value={c.id} className="bg-neutral-900">
+                <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
               ))}
@@ -332,11 +374,10 @@ export function ProductForm({
                 key={t}
                 type="button"
                 onClick={() => setType(t)}
-                className={`rounded-lg px-4 py-2 text-sm transition-colors ${
-                  type === t
-                    ? "bg-emerald-500 text-neutral-950"
-                    : "border border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10"
-                }`}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${type === t
+                  ? "bg-emerald-500 text-neutral-950"
+                  : "border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50"
+                  }`}
               >
                 {t}
               </button>
@@ -344,6 +385,39 @@ export function ProductForm({
           )}
         </div>
       </Section>
+
+      {type === "ACCESSORY" && (
+        <Section title="Variants">
+          <Field label="Color">
+            <input
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              placeholder="Black, white, red..."
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Group with an existing product">
+            <select
+              value={variantOfProductId}
+              onChange={(e) => setVariantOfProductId(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">Standalone product</option>
+              {productChoices
+                .filter((product) => product.type === "ACCESSORY")
+                .map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name}
+                    {product.variantGroup ? " (variant family)" : ""}
+                  </option>
+                ))}
+            </select>
+            <p className="mt-1.5 text-xs text-neutral-500">
+              Choose the existing t-shirt so customers can switch colors from one product page.
+            </p>
+          </Field>
+        </Section>
+      )}
 
       {type === "EQUIPMENT" && (
         <Section title="Equipment specs">
@@ -390,7 +464,7 @@ export function ProductForm({
               />
             </Field>
           </div>
-          <label className="flex items-center gap-2 text-sm text-neutral-300">
+          <label className="flex items-center gap-2 text-sm text-neutral-700">
             <input
               type="checkbox"
               checked={assemblyRequired}
@@ -443,7 +517,7 @@ export function ProductForm({
               className={inputClass}
             />
           </Field>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             <Field label="Calories">
               <input
                 type="number"
@@ -489,7 +563,7 @@ export function ProductForm({
       )}
 
       <Section title="Visibility">
-        <label className="flex items-center gap-2 text-sm text-neutral-300">
+        <label className="flex items-center gap-2 text-sm text-neutral-700">
           <input
             type="checkbox"
             checked={isActive}
@@ -497,7 +571,7 @@ export function ProductForm({
           />
           Active (visible in store)
         </label>
-        <label className="flex items-center gap-2 text-sm text-neutral-300">
+        <label className="flex items-center gap-2 text-sm text-neutral-700">
           <input
             type="checkbox"
             checked={isFeatured}
@@ -508,7 +582,7 @@ export function ProductForm({
       </Section>
 
       {error && (
-        <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
           {error}
         </p>
       )}
