@@ -41,7 +41,7 @@ export default async function CartPage() {
                         </div>
                     </div>
 
-                    <div className="mt-12">
+                    <div className="mt-14 border-t border-neutral-200 pt-10">
                         <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
                             <Sparkles size={15} className="text-emerald-400" />
                             Recommended for your routine
@@ -80,7 +80,7 @@ export default async function CartPage() {
                         </Link>
                     </div>
 
-                    <div className="mt-12">
+                    <div className="mt-14 border-t border-neutral-200 pt-10">
                         <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
                             <Sparkles size={15} className="text-emerald-400" />
                             Popular picks
@@ -160,7 +160,7 @@ export default async function CartPage() {
                 </aside>
             </div>
 
-            <div className="mt-12">
+            <div className="mt-16 border-t border-neutral-200 pt-10">
                 <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
                     <Sparkles size={15} className="text-emerald-400" />
                     Complete the setup

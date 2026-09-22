@@ -69,6 +69,18 @@ export default async function ProductDetailPage({
 
           <ProductVariantPicker variants={variants} currentSlug={product.slug} />
 
+          {product.type === "ACCESSORY" && (product.color || product.size) && (
+            <SpecTable
+              title="Available options"
+              rows={[
+                ["Color", product.color],
+                ["Size", product.size],
+              ]}
+            />
+          )}
+
+          {product.type === "ACCESSORY" && product.size && <SizeGuide />}
+
           <div className="mt-6">
             <AddToCartButton
               productId={product.id}
@@ -208,6 +220,40 @@ function SpecTable({
           </div>
         ))}
       </dl>
+    </div>
+  );
+}
+
+function SizeGuide() {
+  return (
+    <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-neutral-700">
+        Size guide
+      </h2>
+      <div className="grid gap-5 text-sm sm:grid-cols-2">
+        <div>
+          <p className="mb-2 font-medium text-neutral-900">Clothing</p>
+          <dl className="divide-y divide-neutral-200 text-neutral-600">
+            {[["S", "36-38 in chest"], ["M", "39-41 in chest"], ["L", "42-44 in chest"], ["XL", "45-47 in chest"]].map(([size, measurement]) => (
+              <div key={size} className="flex justify-between gap-4 py-1.5">
+                <dt>{size}</dt>
+                <dd className="text-right">{measurement}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        <div>
+          <p className="mb-2 font-medium text-neutral-900">Footwear</p>
+          <dl className="divide-y divide-neutral-200 text-neutral-600">
+            {[["7", "25 cm"], ["8", "26 cm"], ["9", "27 cm"], ["10", "28 cm"], ["11", "29 cm"]].map(([size, measurement]) => (
+              <div key={size} className="flex justify-between gap-4 py-1.5">
+                <dt>US {size}</dt>
+                <dd className="text-right">{measurement}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
     </div>
   );
 }

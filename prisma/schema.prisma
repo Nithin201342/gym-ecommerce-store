@@ -110,6 +110,7 @@ model Product {
   isFeatured  Boolean     @default(false)
   variantGroup String?
   color        String?
+  size         String?
 
   categoryId String   @db.ObjectId
   category   Category @relation(fields: [categoryId], references: [id])

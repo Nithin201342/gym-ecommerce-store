@@ -57,6 +57,13 @@ export function CartItemRow({
           <p className="mt-1 text-sm text-neutral-600">
             {formatCents(product.priceCents)} each
           </p>
+          {(product.color || product.size) && (
+            <p className="mt-1 text-xs text-neutral-500">
+              {[product.color && `Color: ${product.color}`, product.size && `Size: ${product.size}`]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-3">

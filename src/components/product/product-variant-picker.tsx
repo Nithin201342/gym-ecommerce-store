@@ -5,6 +5,7 @@ type Variant = {
     slug: string;
     name: string;
     color: string | null;
+    size: string | null;
     images: string[];
     stock: number;
 };
@@ -41,28 +42,30 @@ export function ProductVariantPicker({
 
     return (
         <div className="mt-6">
-            <p className="mb-3 text-sm font-semibold text-neutral-900">Color</p>
+            <p className="mb-3 text-sm font-semibold text-neutral-900">Options</p>
             <div className="flex flex-wrap gap-3">
                 {variants.map((variant) => {
                     const isCurrent = variant.slug === currentSlug;
-                    const label = variant.color ?? variant.name;
+                    const label = [variant.color, variant.size].filter(Boolean).join(" / ") || variant.name;
 
                     return (
                         <Link
                             key={variant.id}
                             href={`/products/${variant.slug}`}
                             title={`${label}${variant.stock === 0 ? " - Out of stock" : ""}`}
-                            aria-label={`View ${label} color`}
+                            aria-label={`View ${label} option`}
                             className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition ${isCurrent
-                                    ? "border-neutral-950 bg-neutral-950 text-white"
-                                    : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-950"
+                                ? "border-neutral-950 bg-neutral-950 text-white"
+                                : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-950"
                                 }`}
                         >
-                            <span
-                                className="h-4 w-4 rounded-full border border-black/20"
-                                style={{ backgroundColor: swatchColor(variant.color) }}
-                            />
-                            {variant.color ?? "Option"}
+                            {variant.color && (
+                                <span
+                                    className="h-4 w-4 rounded-full border border-black/20"
+                                    style={{ backgroundColor: swatchColor(variant.color) }}
+                                />
+                            )}
+                            <span>{label}</span>
                         </Link>
                     );
                 })}

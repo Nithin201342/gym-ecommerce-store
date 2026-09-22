@@ -52,6 +52,7 @@ export type ProductActionInput = {
   isFeatured: boolean;
   variantOfProductId: string | null;
   color: string | null;
+  size: string | null;
   equipment: EquipmentInput;
   supplement: SupplementInput;
 };
@@ -152,6 +153,7 @@ export async function createProduct(
         isFeatured: input.isFeatured,
         variantGroup,
         color: input.color?.trim() || null,
+        size: input.size?.trim() || null,
         categoryId: input.categoryId,
         ...(input.type === "EQUIPMENT" && input.equipment
           ? { equipmentDetails: { create: input.equipment } }
@@ -215,6 +217,7 @@ export async function updateProduct(
         isFeatured: input.isFeatured,
         variantGroup,
         color: input.color?.trim() || null,
+        size: input.size?.trim() || null,
         categoryId: input.categoryId,
         ...(input.type === "EQUIPMENT" && input.equipment
           ? {

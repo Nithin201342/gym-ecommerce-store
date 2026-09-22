@@ -22,6 +22,7 @@ type InitialProduct = {
   categoryId: string;
   variantGroup: string | null;
   color: string | null;
+  size: string | null;
   equipmentDetails: {
     material: string | null;
     dimensions: string | null;
@@ -137,6 +138,7 @@ export function ProductForm({
     );
   });
   const [color, setColor] = useState(initialProduct?.color ?? "");
+  const [size, setSize] = useState(initialProduct?.size ?? "");
 
   // Equipment fields
   const [material, setMaterial] = useState(
@@ -214,6 +216,7 @@ export function ProductForm({
       isFeatured,
       variantOfProductId: variantOfProductId || null,
       color: color.trim() || null,
+      size: size.trim() || null,
       equipment:
         type === "EQUIPMENT"
           ? {
@@ -395,6 +398,17 @@ export function ProductForm({
               placeholder="Black, white, red..."
               className={inputClass}
             />
+          </Field>
+          <Field label="Size">
+            <input
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              placeholder="S, M, L, XL or 8, 9, 10"
+              className={inputClass}
+            />
+            <p className="mt-1.5 text-xs text-neutral-500">
+              Use clothing sizes or shoe sizes as appropriate.
+            </p>
           </Field>
           <Field label="Group with an existing product">
             <select

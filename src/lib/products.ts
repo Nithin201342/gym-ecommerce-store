@@ -56,6 +56,7 @@ export function getProductVariants(variantGroup: string | null) {
       slug: true,
       name: true,
       color: true,
+      size: true,
       images: true,
       stock: true,
     },

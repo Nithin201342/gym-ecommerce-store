@@ -32,7 +32,7 @@ export function AuthShell({
                             href="/"
                             className="flex w-fit items-center"
                         >
-                            <NovaFitLogo className="h-16 w-44 object-cover object-center" />
+                            <NovaFitLogo className="h-5 w-18 object-cover object-center" />
                         </Link>
 
                         <div className="max-w-xl text-white">
@@ -63,7 +63,7 @@ export function AuthShell({
                             href="/"
                             className="flex items-center"
                         >
-                            <NovaFitLogo className="h-14 w-40 object-cover object-center" />
+                            <NovaFitLogo className="h-5 w-18 object-cover object-center" />
                         </Link>
                         <ArrowUpRight className="h-5 w-5 text-emerald-600" />
                     </div>

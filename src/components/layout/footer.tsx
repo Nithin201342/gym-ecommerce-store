@@ -30,7 +30,7 @@ export function Footer() {
                 <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1.1fr]">
                     <div>
                         <Link href="/" aria-label="NovaFit home" className="inline-flex items-center">
-                            <NovaFitLogo className="h-14 w-40 object-cover object-center" />
+                            <NovaFitLogo className="h-5 w-18 object-cover object-center" />
                         </Link>
                         <p className="mt-5 max-w-sm text-sm leading-6 text-neutral-400">
                             Premium gear and everyday essentials for athletes who want better routines,
@@ -39,11 +39,11 @@ export function Footer() {
                         <div className="mt-6 space-y-3 text-sm text-neutral-400">
                             <div className="flex items-center gap-3">
                                 <MapPin className="h-4 w-4 text-emerald-400" />
-                                <span>15 Forge Street, Austin, TX</span>
+                                <span>15 Nova Street, Austin, TX</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Phone className="h-4 w-4 text-emerald-400" />
-                                <span>+1 (800) 555-0199</span>
+                                <span>+1 (800) 999-9999</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Mail className="h-4 w-4 text-emerald-400" />
