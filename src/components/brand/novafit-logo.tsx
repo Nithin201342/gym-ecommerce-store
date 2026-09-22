@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export function NovaFitLogo({ className = "h-5 w-18" }: { className?: string }) {
+export function NovaFitLogo({ className = "h-4 w-16 sm:h-5 sm:w-18" }: { className?: string }) {
     return (
         <Image
             src="/dumbbell-transparent.png"

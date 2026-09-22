@@ -72,7 +72,7 @@ export function AdminSidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-neutral-200 bg-white/90 p-4 shadow-[0_0_0_1px_rgba(17,17,17,0.02)] backdrop-blur-xl md:flex">
         <Link href="/" aria-label="NovaFit home" className="mb-8 flex items-center justify-center">
-          <NovaFitLogo className="h-5 w-18 object-cover object-center" />
+          <NovaFitLogo className="h-4 w-16 sm:h-5 sm:w-18 object-cover object-center" />
         </Link>
         <p className="mb-4 px-3 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
           Admin
@@ -90,7 +90,7 @@ export function AdminSidebar() {
       {/* Mobile top bar */}
       <div className="flex items-center justify-center border-b border-neutral-200 bg-white/90 p-4 shadow-sm backdrop-blur-xl md:hidden">
         <Link href="/" aria-label="NovaFit home" className="flex items-center justify-center">
-          <NovaFitLogo className="h-5 w-18 object-cover object-center" />
+          <NovaFitLogo className="h-4 w-16 sm:h-5 sm:w-18 object-cover object-center" />
         </Link>
         <button
           onClick={() => setMobileOpen(true)}
@@ -121,7 +121,7 @@ export function AdminSidebar() {
             >
               <div className="mb-8 flex items-center justify-between">
                 <span className="flex items-center text-lg font-semibold text-neutral-900">
-                  <NovaFitLogo className="h-5 w-18 object-cover object-center" />
+                  <NovaFitLogo className="h-4 w-16 sm:h-5 sm:w-18 object-cover object-center" />
                 </span>
                 <button
                   onClick={() => setMobileOpen(false)}

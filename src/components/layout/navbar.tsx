@@ -20,7 +20,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
     <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white">
       <nav className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" aria-label="NovaFit home" className="flex items-center">
-          <NovaFitLogo className="h-5 w-18 object-cover object-center" />
+          <NovaFitLogo className="h-4 w-16 sm:h-5 sm:w-18 object-cover object-center" />
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">

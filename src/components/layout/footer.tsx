@@ -30,7 +30,7 @@ export function Footer() {
                 <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1.1fr]">
                     <div>
                         <Link href="/" aria-label="NovaFit home" className="inline-flex items-center">
-                            <NovaFitLogo className="h-5 w-18 object-cover object-center" />
+                            <NovaFitLogo className="h-4 w-16 sm:h-5 sm:w-18 object-cover object-center" />
                         </Link>
                         <p className="mt-5 max-w-sm text-sm leading-6 text-neutral-400">
                             Premium gear and everyday essentials for athletes who want better routines,
