@@ -2,6 +2,8 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/../auth";
 
+export const MAX_CART_QUANTITY = 10;
+
 export async function getCurrentUserCart() {
   const session = await auth();
   if (!session?.user?.id) return null;

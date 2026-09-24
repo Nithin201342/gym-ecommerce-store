@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTransition } from "react";
+import { Trash2 } from "lucide-react";
 import { formatCents } from "@/lib/format";
 import {
   updateCartItemQuantity,
@@ -39,10 +40,16 @@ export function CartItemRow({
     >
       <Link
         href={`/products/${product.slug}`}
-        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-neutral-900"
+        className="relative aspect-square h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-neutral-100 sm:h-24 sm:w-24"
       >
         {image && (
-          <Image src={image} alt={product.name} fill className="object-cover" />
+          <Image
+            src={image}
+            alt={product.name}
+            fill
+            sizes="(min-width: 640px) 96px, 80px"
+            className="object-contain p-1"
+          />
         )}
       </Link>
 
@@ -93,10 +100,15 @@ export function CartItemRow({
           <button
             onClick={remove}
             disabled={isPending}
-            className="flex items-center gap-2 text-xs text-neutral-500 hover:text-red-400 disabled:opacity-60"
+            className="rounded-lg p-2 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:opacity-60"
+            aria-label={`Remove ${product.name} from cart`}
+            title="Remove from cart"
           >
-            {isPending && <span className="h-3 w-3 animate-spin rounded-full border-2 border-red-400/30 border-t-red-400" />}
-            <span>Remove</span>
+            {isPending ? (
+              <span className="block h-4 w-4 animate-spin rounded-full border-2 border-red-400/30 border-t-red-500" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

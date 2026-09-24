@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { auth } from "@/../auth";
+import { MAX_CART_QUANTITY } from "@/lib/cart";
 import { computeOrderTotals } from "@/lib/pricing";
 import { shippingSchema, type ShippingInput } from "@/lib/validations/checkout";
 
@@ -32,6 +33,14 @@ export async function createCheckoutSession(
 
   if (!cart || cart.items.length === 0) {
     return { ok: false, error: "Your cart is empty." };
+  }
+
+  const totalQuantity = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  if (totalQuantity > MAX_CART_QUANTITY) {
+    return {
+      ok: false,
+      error: `You can only purchase ${MAX_CART_QUANTITY} items at a time. Update your cart to continue.`,
+    };
   }
 
   // Re-validate stock at checkout time — it may have changed since items
@@ -137,7 +146,7 @@ export async function createCheckoutSession(
   } catch (err) {
     console.error("Stripe checkout session creation failed:", err);
     // Clean up the pending order so it doesn't linger as an orphan.
-    await prisma.order.delete({ where: { id: order.id } }).catch(() => {});
+    await prisma.order.delete({ where: { id: order.id } }).catch(() => { });
     return {
       ok: false,
       error: "Something went wrong starting checkout. Please try again.",

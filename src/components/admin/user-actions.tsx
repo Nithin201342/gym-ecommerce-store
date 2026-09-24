@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateUser, toggleUserBlocked } from "@/lib/actions/admin-actions";
+import { Pencil, ShieldCheck, ShieldOff } from "lucide-react";
 import type { Role } from "@prisma/client";
 
 type UserSummary = {
@@ -100,20 +101,24 @@ export function UserActions({ user }: { user: UserSummary }) {
             <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 transition-all hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700"
+                className="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-emerald-700 transition-all hover:border-emerald-400 hover:bg-emerald-100"
+                aria-label={`Edit ${user.name ?? user.email}`}
+                title="Edit user"
             >
-                Edit
+                <Pencil className="h-4 w-4" />
             </button>
             <button
                 type="button"
                 onClick={toggleBlocked}
                 disabled={isPending}
-                className={`inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 ${user.isBlocked
+                className={`inline-flex items-center justify-center rounded-lg border p-2 transition-all disabled:cursor-not-allowed disabled:opacity-60 ${user.isBlocked
                     ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-500 hover:bg-emerald-100"
                     : "border-red-200 bg-red-50 text-red-600 hover:border-red-400 hover:bg-red-100"
                     }`}
+                aria-label={user.isBlocked ? "Unblock user" : "Block user"}
+                title={user.isBlocked ? "Unblock user" : "Block user"}
             >
-                {isPending ? "Updating..." : user.isBlocked ? "Unblock" : "Block"}
+                {isPending ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current/30 border-t-current" /> : user.isBlocked ? <ShieldCheck className="h-4 w-4" /> : <ShieldOff className="h-4 w-4" />}
             </button>
         </div>
     );

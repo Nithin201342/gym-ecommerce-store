@@ -12,9 +12,9 @@ export function ProductCard({ product }: { product: ProductListItem }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-xl"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-xl"
     >
-      <div className="relative aspect-square w-full overflow-hidden bg-neutral-100 p-3 sm:p-4">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100 p-2 sm:aspect-square sm:p-4">
         <ProductImage
           src={image}
           alt={product.name}
@@ -37,11 +37,11 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <span className="text-xs uppercase tracking-wide text-neutral-500">
+      <div className="flex h-36 flex-col gap-1 p-4 sm:h-40">
+        <span className="h-4 truncate text-xs uppercase tracking-wide text-neutral-500">
           {product.category.name}
         </span>
-        <h3 className="line-clamp-2 text-sm font-medium text-neutral-900">
+        <h3 className="h-10 line-clamp-2 text-sm font-medium text-neutral-900">
           {product.name}
         </h3>
 

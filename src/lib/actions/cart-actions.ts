@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/../auth";
+import { MAX_CART_QUANTITY } from "@/lib/cart";
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -44,9 +45,24 @@ export async function addToCart(
     where: { cartId_productId: { cartId: cart.id, productId } },
   });
 
+  const cartTotal = await prisma.cartItem.aggregate({
+    where: { cartId: cart.id },
+    _sum: { quantity: true },
+  });
+  const currentTotal = cartTotal._sum.quantity ?? 0;
+  const requestedQuantity = Number.isInteger(quantity) ? quantity : 0;
+  const remainingForProduct = MAX_CART_QUANTITY - (currentTotal - (existing?.quantity ?? 0));
+  if (requestedQuantity <= 0 || remainingForProduct <= 0) {
+    return {
+      ok: false,
+      error: `You can only have ${MAX_CART_QUANTITY} items in your cart at a time.`,
+    };
+  }
+
   const nextQuantity = Math.min(
-    (existing?.quantity ?? 0) + quantity,
-    product.stock
+    (existing?.quantity ?? 0) + requestedQuantity,
+    product.stock,
+    (existing?.quantity ?? 0) + remainingForProduct
   );
 
   await prisma.cartItem.upsert({
@@ -79,6 +95,22 @@ export async function updateCartItemQuantity(
   if (quantity <= 0) {
     await prisma.cartItem.delete({ where: { id: cartItemId } });
   } else {
+    if (!Number.isInteger(quantity)) {
+      return { ok: false, error: "Quantity must be a whole number." };
+    }
+
+    const cartTotal = await prisma.cartItem.aggregate({
+      where: { cartId: item.cartId },
+      _sum: { quantity: true },
+    });
+    const otherItemsTotal = (cartTotal._sum.quantity ?? 0) - item.quantity;
+    if (otherItemsTotal + quantity > MAX_CART_QUANTITY) {
+      return {
+        ok: false,
+        error: `You can only have ${MAX_CART_QUANTITY} items in your cart at a time.`,
+      };
+    }
+
     await prisma.cartItem.update({
       where: { id: cartItemId },
       data: { quantity: Math.min(quantity, item.product.stock) },

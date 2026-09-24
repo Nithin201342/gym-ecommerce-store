@@ -4,6 +4,7 @@ import { formatCents } from "@/lib/format";
 import { ToggleActiveButton } from "@/components/admin/toggle-active-button";
 import { FadeIn } from "@/components/admin/fade-in";
 import { ProductImage } from "@/components/product/product-image";
+import { Pencil } from "lucide-react";
 
 export default async function AdminProductsPage() {
   const products = await getAdminProducts();
@@ -20,7 +21,7 @@ export default async function AdminProductsPage() {
         </Link>
       </div>
 
-      <FadeIn className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white shadow-[0_15px_35px_rgba(17,17,17,0.04)]">
+      <FadeIn className="hidden overflow-x-auto rounded-2xl border border-neutral-200 bg-white shadow-[0_15px_35px_rgba(17,17,17,0.04)] md:block">
         <table className="w-full min-w-[820px] text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
@@ -84,9 +85,11 @@ export default async function AdminProductsPage() {
                   <div className="flex justify-end gap-3">
                     <Link
                       href={`/admin/products/${p.id}/edit`}
-                      className="inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 transition-all hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700"
+                      className="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-emerald-700 transition-all hover:border-emerald-400 hover:bg-emerald-100"
+                      aria-label={`Edit ${p.name}`}
+                      title="Edit product"
                     >
-                      Edit
+                      <Pencil className="h-4 w-4" />
                     </Link>
                     <ToggleActiveButton
                       productId={p.id}
@@ -106,6 +109,78 @@ export default async function AdminProductsPage() {
           </tbody>
         </table>
       </FadeIn>
+
+      <div className="space-y-3 md:hidden">
+        {products.map((p) => (
+          <div
+            key={p.id}
+            className="rounded-2xl border border-neutral-200 bg-white p-3 shadow-sm"
+          >
+            <div className="flex gap-3">
+              {p.images[0] ? (
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100">
+                  <ProductImage
+                    src={p.images[0]}
+                    alt={p.name}
+                    sizes="80px"
+                    className="h-full w-full object-contain p-1"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-dashed border-neutral-300 bg-neutral-100 text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-500">
+                  IMG
+                </div>
+              )}
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h2 className="truncate text-sm font-semibold text-neutral-900">
+                      {p.name}
+                    </h2>
+                    <p className="mt-0.5 text-xs text-neutral-500">
+                      {p.category.name} · {p.type}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] ${p.isActive
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-neutral-200 text-neutral-600"
+                      }`}
+                  >
+                    {p.isActive ? "Active" : "Hidden"}
+                  </span>
+                </div>
+                <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+                  <span className="font-semibold text-neutral-900">
+                    {formatCents(p.priceCents)}
+                  </span>
+                  <span className={p.stock <= 5 ? "text-amber-600" : "text-neutral-600"}>
+                    {p.stock} in stock
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3 flex justify-end gap-2 border-t border-neutral-100 pt-3">
+              <Link
+                href={`/admin/products/${p.id}/edit`}
+                className="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-emerald-700 transition-colors hover:border-emerald-400 hover:bg-emerald-100"
+                aria-label={`Edit ${p.name}`}
+                title="Edit product"
+              >
+                <Pencil className="h-4 w-4" />
+              </Link>
+              <ToggleActiveButton productId={p.id} isActive={p.isActive} />
+            </div>
+          </div>
+        ))}
+        {products.length === 0 && (
+          <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-8 text-center text-sm text-neutral-500">
+            No products yet.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default async function AdminCategoriesPage() {
         <CategoryForm />
       </div>
 
-      <FadeIn className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_15px_35px_rgba(17,17,17,0.04)]">
+      <FadeIn className="hidden overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_15px_35px_rgba(17,17,17,0.04)] md:block">
         <table className="w-full min-w-[600px] text-sm">
           <thead>
             <tr className="border-b border-neutral-200 text-left text-neutral-500">
@@ -45,6 +45,23 @@ export default async function AdminCategoriesPage() {
           </tbody>
         </table>
       </FadeIn>
+
+      <div className="space-y-3 md:hidden">
+        {categories.map((category) => (
+          <div key={category.id} className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+            <h2 className="font-semibold text-neutral-900">{category.name}</h2>
+            <p className="mt-1 text-xs text-neutral-500">/{category.slug}</p>
+            <p className="mt-3 text-sm text-neutral-600">
+              {category.description ?? "No description provided."}
+            </p>
+          </div>
+        ))}
+        {categories.length === 0 && (
+          <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-8 text-center text-sm text-neutral-500">
+            No categories yet.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

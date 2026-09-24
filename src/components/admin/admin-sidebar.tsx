@@ -88,8 +88,8 @@ export function AdminSidebar() {
       </aside>
 
       {/* Mobile top bar */}
-      <div className="flex items-center justify-center border-b border-neutral-200 bg-white/90 p-4 shadow-sm backdrop-blur-xl md:hidden">
-        <Link href="/" aria-label="NovaFit home" className="flex items-center justify-center">
+      <div className="flex items-center justify-between border-b border-neutral-200 bg-white/90 p-4 shadow-sm backdrop-blur-xl md:hidden">
+        <Link href="/" aria-label="NovaFit home" className="flex items-center">
           <NovaFitLogo className="h-4 w-16 sm:h-5 sm:w-18 object-cover object-center" />
         </Link>
         <button
