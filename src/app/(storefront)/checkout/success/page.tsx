@@ -19,30 +19,36 @@ export default async function CheckoutSuccessPage({
 
   if (!orderId || !session?.user?.id) notFound();
 
-  let order = await getOrderForUser(orderId, session.user.id);
-  if (!order) notFound();
+  const initialOrder = await getOrderForUser(orderId, session.user.id);
+  if (!initialOrder) notFound();
+  let order = initialOrder as NonNullable<typeof initialOrder>;
 
   // The browser can return from Stripe before the webhook arrives. Verify
   // the session directly so the order is completed even if webhook delivery
   // is delayed or temporarily unavailable.
   if (order.status !== "PAID" && order.stripeSessionId) {
-    const stripeSession = await getStripe().checkout.sessions.retrieve(
-      order.stripeSessionId
-    );
-    const paymentIntentId =
-      typeof stripeSession.payment_intent === "string"
-        ? stripeSession.payment_intent
-        : stripeSession.payment_intent?.id;
+    try {
+      const stripeSession = await getStripe().checkout.sessions.retrieve(
+        order.stripeSessionId
+      );
+      const paymentIntentId =
+        typeof stripeSession.payment_intent === "string"
+          ? stripeSession.payment_intent
+          : stripeSession.payment_intent?.id;
 
-    if (
-      stripeSession.metadata?.orderId === order.id &&
-      stripeSession.payment_status === "paid"
-    ) {
-      await fulfillPaidOrder(order.id, paymentIntentId);
-      revalidatePath("/", "layout");
-      revalidatePath("/cart");
-      order = await getOrderForUser(orderId, session.user.id);
-      if (!order) notFound();
+      if (
+        stripeSession.metadata?.orderId === order.id &&
+        stripeSession.payment_status === "paid"
+      ) {
+        await fulfillPaidOrder(order.id, paymentIntentId);
+        revalidatePath("/", "layout");
+        revalidatePath("/cart");
+        const refreshedOrder = await getOrderForUser(orderId, session.user.id);
+        if (!refreshedOrder) notFound();
+        order = refreshedOrder as NonNullable<typeof refreshedOrder>;
+      }
+    } catch (error) {
+      console.error("Unable to verify the paid checkout session:", error);
     }
   }
 
