@@ -5,8 +5,8 @@ html {
 }
 
 :root {
-  --background: #f8f9fa;
-  --foreground: #111111;
+  --background: #edf1eb;
+  --foreground: #17251e;
 }
 
 @theme inline {
@@ -25,7 +25,7 @@ body {
 
 .hero-surface {
   min-height: calc(100svh - 4rem);
-  background: #f8f9fa;
+  background: #edf1eb;
 }
 
 .hero-background {
@@ -80,6 +80,15 @@ body {
 
 .nav-link {
   position: relative;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.nav-link:hover {
+  background: #e1ebe0;
+  color: #173c2d;
+  transform: translateY(-1px);
 }
 
 .nav-link::after {
@@ -88,7 +97,7 @@ body {
   left: 0;
   width: 100%;
   height: 1px;
-  background: #111;
+  background: #16845c;
   content: "";
   transform: scaleX(0);
   transform-origin: right;
@@ -98,6 +107,164 @@ body {
 .nav-link:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+button:not(:disabled),
+a[class*="rounded-"]:not([class*="group"]):not(.nav-link) {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, filter 180ms ease;
+}
+
+button:not(:disabled):hover,
+a[class*="rounded-"]:not([class*="group"]):not(.nav-link):hover {
+  filter: brightness(1.04) saturate(1.08);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(23, 60, 45, 0.16);
+}
+
+button:not(:disabled):active,
+a[class*="rounded-"]:not([class*="group"]):not(.nav-link):active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 2px 6px rgba(23, 60, 45, 0.12);
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #16845c;
+  outline-offset: 3px;
+}
+
+.navigation-loading-backdrop {
+  background: rgba(16, 31, 23, 0.34);
+  backdrop-filter: blur(5px);
+  animation: loader-backdrop-in 180ms ease-out both;
+}
+
+.navigation-loading-card {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  align-items: center;
+  gap: 0.85rem;
+  width: min(20rem, calc(100vw - 2rem));
+  padding: 1.1rem 1.25rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 1rem;
+  background: #f7f9f4;
+  box-shadow: 0 22px 70px rgba(5, 20, 12, 0.24);
+  animation: loader-card-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.navigation-loading-mark {
+  display: flex;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  border-radius: 0.7rem;
+  background: #e3eee5;
+}
+
+.navigation-loading-mark span {
+  width: 0.22rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: #16845c;
+  animation: loader-beat 760ms ease-in-out infinite;
+}
+
+.navigation-loading-mark span:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.navigation-loading-mark span:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.navigation-loading-brand {
+  color: #173c2d;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.navigation-loading-caption {
+  margin-top: 0.15rem;
+  color: #65756a;
+  font-size: 0.72rem;
+}
+
+.navigation-loading-progress {
+  grid-column: 1 / -1;
+  height: 0.2rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dce5dc;
+}
+
+.navigation-loading-progress span {
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: inherit;
+  background: #16845c;
+  animation: loader-progress 1.1s ease-in-out infinite;
+}
+
+@keyframes loader-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes loader-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes loader-beat {
+
+  0%,
+  100% {
+    transform: scaleY(0.55);
+    opacity: 0.65;
+  }
+
+  50% {
+    transform: scaleY(1.25);
+    opacity: 1;
+  }
+}
+
+@keyframes loader-progress {
+  from {
+    transform: translateX(-110%);
+  }
+
+  to {
+    transform: translateX(280%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
 
 @media print {

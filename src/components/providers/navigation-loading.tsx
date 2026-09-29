@@ -52,14 +52,24 @@ export function NavigationLoading() {
 
     return (
         <div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-neutral-950/10 backdrop-blur-[2px]"
+            className="navigation-loading-backdrop fixed inset-0 z-[100] flex items-center justify-center"
             role="status"
             aria-live="polite"
             aria-label="Loading page"
         >
-            <div className="flex items-center gap-3 rounded-full border border-neutral-200 bg-white px-5 py-3 text-sm font-medium text-neutral-800 shadow-xl">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-300 border-t-emerald-500" />
-                Loading...
+            <div className="navigation-loading-card">
+                <div className="navigation-loading-mark" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
+                </div>
+                <div>
+                    <p className="navigation-loading-brand">NovaFit</p>
+                    <p className="navigation-loading-caption">Loading your next move</p>
+                </div>
+                <div className="navigation-loading-progress" aria-hidden="true">
+                    <span />
+                </div>
             </div>
         </div>
     );

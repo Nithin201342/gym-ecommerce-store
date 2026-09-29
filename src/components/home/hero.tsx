@@ -2,8 +2,15 @@
 
 import { useRef } from "react";
 import Link from "next/link";
+import { Bebas_Neue } from "next/font/google";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { MapPin, Phone, ShoppingBag } from "lucide-react";
+
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -54,7 +61,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="hero-title absolute top-[42%] z-0 -translate-y-1/2 text-[clamp(5rem,18vw,15rem)] font-black uppercase leading-[0.78] tracking-[-0.06em] text-white/90"
+            className={`${bebasNeue.className} hero-title absolute top-[42%] z-0 -translate-y-1/2 text-[clamp(5rem,18vw,15rem)] uppercase leading-[0.78] tracking-[0.035em] text-white/90 drop-shadow-[0_8px_30px_rgba(0,0,0,0.3)]`}
           >
             NovaFit
           </motion.h1>

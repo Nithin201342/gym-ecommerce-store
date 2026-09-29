@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased" data-scroll-behavior="smooth">
-      <body className="min-h-full flex flex-col bg-[#f8f9fa]">
+      <body className="min-h-full flex flex-col bg-[#edf1eb]">
         <AuthSessionProvider>
           <NavigationLoading />
           {children}

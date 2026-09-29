@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useTransition } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 import { formatCents } from "@/lib/format";
 import {
@@ -17,26 +17,33 @@ export function CartItemRow({
   item: CartWithItems["items"][number];
 }) {
   const [isPending, startTransition] = useTransition();
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [quantity, setOptimisticQuantity] = useOptimistic(item.quantity);
   const { product } = item;
   const image = product.images[0];
-  const atMaxStock = item.quantity >= product.stock;
+  const atMaxStock = quantity >= product.stock;
 
   function setQuantity(next: number) {
     startTransition(async () => {
+      setOptimisticQuantity(next);
       await updateCartItemQuantity(item.id, next);
     });
   }
 
   function remove() {
+    setIsRemoving(true);
     startTransition(async () => {
-      await removeCartItem(item.id);
+      try {
+        await removeCartItem(item.id);
+      } finally {
+        setIsRemoving(false);
+      }
     });
   }
 
   return (
     <div
-      className={`flex gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm transition-opacity ${isPending ? "opacity-60" : ""
-        }`}
+      className="flex gap-4 rounded-2xl border border-neutral-200 bg-[#fbfcf8] p-4 shadow-sm"
     >
       <Link
         href={`/products/${product.slug}`}
@@ -83,8 +90,8 @@ export function CartItemRow({
             >
               −
             </button>
-            <span className="flex w-8 items-center justify-center text-sm text-neutral-950">
-              {isPending ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-950" /> : item.quantity}
+            <span className="flex w-8 items-center justify-center text-sm text-neutral-950" aria-live="polite">
+              {quantity}
             </span>
             <button
               onClick={() => setQuantity(item.quantity + 1)}
@@ -104,7 +111,7 @@ export function CartItemRow({
             aria-label={`Remove ${product.name} from cart`}
             title="Remove from cart"
           >
-            {isPending ? (
+            {isRemoving ? (
               <span className="block h-4 w-4 animate-spin rounded-full border-2 border-red-400/30 border-t-red-500" />
             ) : (
               <Trash2 className="h-4 w-4" />
@@ -114,7 +121,7 @@ export function CartItemRow({
       </div>
 
       <div className="text-right text-sm font-medium text-neutral-950">
-        {formatCents(product.priceCents * item.quantity)}
+        {formatCents(product.priceCents * quantity)}
       </div>
     </div>
   );

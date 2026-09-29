@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { ShoppingBag, Sparkles, Truck } from "lucide-react";
 import { getCurrentUserCart } from "@/lib/cart";
@@ -8,7 +9,6 @@ import { ProductCard } from "@/components/product/product-card";
 
 export default async function CartPage() {
     const cart = await getCurrentUserCart();
-    const suggestedProducts = await getProducts({ featured: true });
 
     if (!cart) {
         return (
@@ -41,17 +41,9 @@ export default async function CartPage() {
                         </div>
                     </div>
 
-                    <div className="mt-14 border-t border-neutral-200 pt-10">
-                        <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
-                            <Sparkles size={15} className="text-emerald-400" />
-                            Recommended for your routine
-                        </div>
-                        <div className="grid gap-5 md:grid-cols-3">
-                            {suggestedProducts.slice(0, 3).map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
-                    </div>
+                    <Suspense fallback={<div className="mt-14 h-64" aria-hidden="true" />}>
+                        <ProductRecommendations heading="Recommended for your routine" className="mt-14" />
+                    </Suspense>
                 </div>
             </div>
         );
@@ -80,17 +72,9 @@ export default async function CartPage() {
                         </Link>
                     </div>
 
-                    <div className="mt-14 border-t border-neutral-200 pt-10">
-                        <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
-                            <Sparkles size={15} className="text-emerald-400" />
-                            Popular picks
-                        </div>
-                        <div className="grid gap-5 md:grid-cols-3">
-                            {suggestedProducts.slice(0, 3).map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
-                    </div>
+                    <Suspense fallback={<div className="mt-14 h-64" aria-hidden="true" />}>
+                        <ProductRecommendations heading="Popular picks" className="mt-14" />
+                    </Suspense>
                 </div>
             </div>
         );
@@ -125,7 +109,7 @@ export default async function CartPage() {
                     ))}
                 </div>
 
-                <aside className="rounded-[24px] border border-neutral-200 bg-white p-6 shadow-sm">
+                <aside className="rounded-[24px] border border-emerald-950/10 bg-[#f7f9f4] p-6 shadow-sm">
                     <h2 className="text-lg font-semibold text-neutral-950">Summary</h2>
 
                     <div className="mt-5 space-y-4 text-sm text-neutral-700">
@@ -160,17 +144,33 @@ export default async function CartPage() {
                 </aside>
             </div>
 
-            <div className="mt-16 border-t border-neutral-200 pt-10">
-                <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
-                    <Sparkles size={15} className="text-emerald-400" />
-                    Complete the setup
-                </div>
-                <div className="grid gap-5 md:grid-cols-3">
-                    {suggestedProducts.slice(0, 3).map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
-            </div>
+            <Suspense fallback={<div className="mt-16 h-64" aria-hidden="true" />}>
+                <ProductRecommendations heading="Complete the setup" className="mt-16" />
+            </Suspense>
         </div>
+    );
+}
+
+async function ProductRecommendations({
+    heading,
+    className,
+}: {
+    heading: string;
+    className: string;
+}) {
+    const suggestedProducts = await getProducts({ featured: true });
+
+    return (
+        <section className={`${className} border-t border-neutral-200 pt-10`}>
+            <div className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-neutral-700">
+                <Sparkles size={15} className="text-emerald-500" />
+                {heading}
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+                {suggestedProducts.slice(0, 3).map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
+        </section>
     );
 }

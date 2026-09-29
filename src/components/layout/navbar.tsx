@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Menu, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -16,16 +17,17 @@ const CATEGORY_LINKS = [
 export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white">
+    <header className="sticky top-0 z-50 border-b border-[#d9e1d7] bg-[#f4f7f1]/95 backdrop-blur">
       <nav className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" aria-label="NovaFit home" className="flex items-center">
           <NovaFitLogo className="h-4 w-16 sm:h-5 sm:w-18 object-cover object-center" />
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          <Link href="/" className="nav-link text-sm text-neutral-700">Home</Link>
+          <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className={`nav-link text-sm text-neutral-700 ${pathname === "/" ? "bg-emerald-100/70 text-emerald-950" : ""}`}>Home</Link>
           {CATEGORY_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -36,13 +38,14 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
             </Link>
           ))}
           <Link href="/products" className="nav-link text-sm text-neutral-700">About</Link>
-          <Link href="/products" aria-label="Search products" className="text-neutral-700 transition-colors hover:text-neutral-950"><Search size={17} /></Link>
+          <Link href="/products" aria-label="Search products" className="inline-flex h-9 w-9 items-center justify-center rounded-md text-neutral-700 transition-colors hover:bg-emerald-100 hover:text-emerald-950 active:translate-y-px"><Search size={17} /></Link>
         </div>
 
         <div className="flex items-center gap-4">
           <Link
             href="/cart"
-            className="relative text-sm text-neutral-700 transition-colors hover:text-neutral-950"
+            aria-current={pathname === "/cart" ? "page" : undefined}
+            className={`relative rounded-md px-2 py-2 text-sm transition-colors hover:bg-emerald-100 hover:text-emerald-950 active:translate-y-px ${pathname === "/cart" ? "bg-emerald-100/70 text-emerald-950" : "text-neutral-700"}`}
           >
             Cart
             {cartCount > 0 && (
