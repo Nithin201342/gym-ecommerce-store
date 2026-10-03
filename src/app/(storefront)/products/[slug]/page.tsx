@@ -5,6 +5,7 @@ import { AddToCartButton } from "@/components/product/add-to-cart-button";
 import { ProductImage } from "@/components/product/product-image";
 import { ProductVariantPicker } from "@/components/product/product-variant-picker";
 import { ProductCard } from "@/components/product/product-card";
+import { ProductStockStatus } from "@/components/product/product-stock-status";
 import Link from "next/link";
 
 export default async function ProductDetailPage({
@@ -62,6 +63,8 @@ export default async function ProductDetailPage({
               </span>
             )}
           </div>
+
+          <ProductStockStatus stock={product.stock} className="mt-2" />
 
           <p className="mt-6 whitespace-pre-line text-neutral-700">
             {product.description}

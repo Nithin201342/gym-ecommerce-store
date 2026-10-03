@@ -39,12 +39,20 @@ export function AddToCartButton({
     }
 
     setFeedback(null);
+    window.dispatchEvent(new CustomEvent("novafit:cart-count", { detail: 1 }));
     startTransition(async () => {
-      const result = await addToCart(productId, 1);
-      if (result.ok) {
-        setFeedback({ type: "success", message: "Added to cart ✓" });
-      } else {
+      try {
+        const result = await addToCart(productId, 1);
+        if (result.ok) {
+          setFeedback({ type: "success", message: "Added to cart ✓" });
+          return;
+        }
+
+        window.dispatchEvent(new CustomEvent("novafit:cart-count", { detail: -1 }));
         setFeedback({ type: "error", message: result.error });
+      } catch {
+        window.dispatchEvent(new CustomEvent("novafit:cart-count", { detail: -1 }));
+        setFeedback({ type: "error", message: "Could not update your cart. Please try again." });
       }
     });
   }

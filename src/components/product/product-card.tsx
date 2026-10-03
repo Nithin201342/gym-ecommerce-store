@@ -2,6 +2,7 @@ import Link from "next/link";
 import { formatCents } from "@/lib/format";
 import type { ProductListItem } from "@/lib/products";
 import { ProductImage } from "@/components/product/product-image";
+import { ProductStockStatus } from "@/components/product/product-stock-status";
 
 export function ProductCard({ product }: { product: ProductListItem }) {
   const image = product.images[0];
@@ -37,13 +38,15 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         )}
       </div>
 
-      <div className="flex h-36 flex-col gap-1 p-4 sm:h-40">
+      <div className="flex min-h-36 flex-col gap-1 p-4 sm:min-h-40">
         <span className="h-4 truncate text-xs uppercase tracking-wide text-neutral-500">
           {product.category.name}
         </span>
         <h3 className="h-10 line-clamp-2 text-sm font-medium text-neutral-900">
           {product.name}
         </h3>
+
+        {product.stock > 0 && <ProductStockStatus stock={product.stock} />}
 
         <div className="mt-auto flex items-baseline gap-2 pt-2">
           <span className="text-base font-semibold text-neutral-950">

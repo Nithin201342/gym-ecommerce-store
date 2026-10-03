@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -15,9 +15,24 @@ const CATEGORY_LINKS = [
 ];
 
 export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
+  return <NavbarView key={cartCount} cartCount={cartCount} />;
+}
+
+function NavbarView({ cartCount }: { cartCount: number }) {
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [displayCartCount, setDisplayCartCount] = useState(cartCount);
   const pathname = usePathname();
+
+  useEffect(() => {
+    function updateCartCount(event: Event) {
+      const quantityDelta = (event as CustomEvent<number>).detail;
+      setDisplayCartCount((count) => Math.max(0, count + quantityDelta));
+    }
+
+    window.addEventListener("novafit:cart-count", updateCartCount);
+    return () => window.removeEventListener("novafit:cart-count", updateCartCount);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#d9e1d7] bg-[#f4f7f1]/95 backdrop-blur">
@@ -27,30 +42,30 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className={`nav-link text-sm text-neutral-700 ${pathname === "/" ? "bg-emerald-100/70 text-emerald-950" : ""}`}>Home</Link>
+          <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className="nav-link navbar-control text-sm text-neutral-700">Home</Link>
           {CATEGORY_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="nav-link text-sm text-neutral-700"
+              className="nav-link navbar-control text-sm text-neutral-700"
             >
               {link.label}
             </Link>
           ))}
-          <Link href="/products" className="nav-link text-sm text-neutral-700">About</Link>
-          <Link href="/products" aria-label="Search products" className="inline-flex h-9 w-9 items-center justify-center rounded-md text-neutral-700 transition-colors hover:bg-emerald-100 hover:text-emerald-950 active:translate-y-px"><Search size={17} /></Link>
+          <Link href="/products" className="nav-link navbar-control text-sm text-neutral-700">About</Link>
+          <Link href="/products" aria-label="Search products" className="nav-icon navbar-control inline-flex h-9 w-9 items-center justify-center text-neutral-700"><Search size={17} /></Link>
         </div>
 
         <div className="flex items-center gap-4">
           <Link
             href="/cart"
             aria-current={pathname === "/cart" ? "page" : undefined}
-            className={`relative rounded-md px-2 py-2 text-sm transition-colors hover:bg-emerald-100 hover:text-emerald-950 active:translate-y-px ${pathname === "/cart" ? "bg-emerald-100/70 text-emerald-950" : "text-neutral-700"}`}
+            className={`nav-link navbar-control relative text-sm ${pathname === "/cart" ? "text-emerald-950" : "text-neutral-700"}`}
           >
             Cart
-            {cartCount > 0 && (
+            {displayCartCount > 0 && (
               <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[10px] font-semibold text-neutral-950">
-                {cartCount}
+                {displayCartCount}
               </span>
             )}
           </Link>
@@ -59,21 +74,21 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
             <div className="flex items-center gap-3">
               <Link
                 href="/orders"
-                className="hidden text-sm text-neutral-700 transition-colors hover:text-neutral-950 sm:block"
+                className="navbar-control hidden px-2 py-2 text-sm text-neutral-700 sm:block"
               >
                 Orders
               </Link>
               {session.user.role === "ADMIN" && (
                 <Link
                   href="/admin"
-                  className="text-sm text-neutral-600 transition-colors hover:text-neutral-950"
+                  className="navbar-control px-2 py-2 text-sm text-neutral-600"
                 >
                   Admin
                 </Link>
               )}
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="hidden rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition-colors hover:bg-neutral-100 sm:block"
+                className="navbar-control hidden border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 sm:block"
               >
                 Sign out
               </button>
@@ -81,7 +96,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
           ) : (
             <Link
               href="/login"
-              className="rounded-full bg-neutral-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+              className="navbar-control bg-neutral-950 px-4 py-2 text-sm font-medium text-white"
             >
               Sign in
             </Link>
@@ -90,7 +105,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
           <button
             type="button"
             onClick={() => setMobileOpen((open) => !open)}
-            className="rounded-lg border border-neutral-200 p-2 text-neutral-700 md:hidden"
+            className="navbar-control border border-neutral-200 p-2 text-neutral-700 md:hidden"
             aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileOpen}
           >
@@ -122,14 +137,14 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
                   <button
                     type="button"
                     onClick={() => setMobileOpen(false)}
-                    className="rounded-lg border border-neutral-200 bg-neutral-50 p-1.5 text-neutral-700"
+                    className="navbar-control border border-neutral-200 bg-neutral-50 p-1.5 text-neutral-700"
                     aria-label="Close navigation menu"
                   >
                     <X size={18} />
                   </button>
                 </div>
                 <div className="grid gap-1">
-                  <Link href="/" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm text-neutral-700 hover:bg-neutral-100">
+                  <Link href="/" onClick={() => setMobileOpen(false)} className="navbar-control w-full px-3 py-2.5 text-sm text-neutral-700">
                     Home
                   </Link>
                   {CATEGORY_LINKS.map((link) => (
@@ -137,21 +152,21 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="rounded-lg px-3 py-2.5 text-sm text-neutral-700 hover:bg-neutral-100"
+                      className="navbar-control w-full px-3 py-2.5 text-sm text-neutral-700"
                     >
                       {link.label}
                     </Link>
                   ))}
-                  <Link href="/products" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm text-neutral-700 hover:bg-neutral-100">
+                  <Link href="/products" onClick={() => setMobileOpen(false)} className="navbar-control w-full px-3 py-2.5 text-sm text-neutral-700">
                     About
                   </Link>
                   {status === "authenticated" && (
-                    <Link href="/orders" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm text-neutral-700 hover:bg-neutral-100">
+                    <Link href="/orders" onClick={() => setMobileOpen(false)} className="navbar-control w-full px-3 py-2.5 text-sm text-neutral-700">
                       Orders
                     </Link>
                   )}
                   {status === "authenticated" && session.user.role === "ADMIN" && (
-                    <Link href="/admin" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm text-neutral-700 hover:bg-neutral-100">
+                    <Link href="/admin" onClick={() => setMobileOpen(false)} className="navbar-control w-full px-3 py-2.5 text-sm text-neutral-700">
                       Admin
                     </Link>
                   )}
@@ -159,7 +174,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
                     <button
                       type="button"
                       onClick={() => signOut({ callbackUrl: "/" })}
-                      className="mt-2 rounded-lg border border-neutral-200 px-3 py-2.5 text-left text-sm text-neutral-700 hover:bg-neutral-100"
+                      className="navbar-control mt-2 w-full border border-neutral-200 px-3 py-2.5 text-left text-sm text-neutral-700"
                     >
                       Sign out
                     </button>

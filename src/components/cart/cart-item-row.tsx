@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useOptimistic, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 import { formatCents } from "@/lib/format";
 import {
@@ -18,26 +18,84 @@ export function CartItemRow({
 }) {
   const [isPending, startTransition] = useTransition();
   const [isRemoving, setIsRemoving] = useState(false);
-  const [quantity, setOptimisticQuantity] = useOptimistic(item.quantity);
+  const [quantity, setQuantityValue] = useState(item.quantity);
+  const confirmedQuantity = useRef(item.quantity);
+  const desiredQuantity = useRef(item.quantity);
+  const savingQuantity = useRef(false);
   const { product } = item;
   const image = product.images[0];
   const atMaxStock = quantity >= product.stock;
 
+  function dispatchCartChange(quantityDelta: number) {
+    window.dispatchEvent(new CustomEvent("novafit:cart-count", { detail: quantityDelta }));
+    window.dispatchEvent(
+      new CustomEvent("novafit:cart-subtotal", {
+        detail: product.priceCents * quantityDelta,
+      })
+    );
+  }
+
+  function persistQuantity() {
+    if (savingQuantity.current) return;
+    savingQuantity.current = true;
+
+    void (async () => {
+      try {
+        while (desiredQuantity.current !== confirmedQuantity.current) {
+          const targetQuantity = desiredQuantity.current;
+          let result: Awaited<ReturnType<typeof updateCartItemQuantity>>;
+
+          try {
+            result = await updateCartItemQuantity(item.id, targetQuantity);
+          } catch {
+            result = { ok: false, error: "Could not update your cart." };
+          }
+
+          if (result.ok) {
+            confirmedQuantity.current = targetQuantity;
+            continue;
+          }
+
+          if (desiredQuantity.current !== targetQuantity) continue;
+
+          const rollbackDelta = confirmedQuantity.current - targetQuantity;
+          desiredQuantity.current = confirmedQuantity.current;
+          setQuantityValue(confirmedQuantity.current);
+          dispatchCartChange(rollbackDelta);
+        }
+      } finally {
+        savingQuantity.current = false;
+        if (desiredQuantity.current !== confirmedQuantity.current) {
+          persistQuantity();
+        }
+      }
+    })();
+  }
+
   function setQuantity(next: number) {
-    startTransition(async () => {
-      setOptimisticQuantity(next);
-      await updateCartItemQuantity(item.id, next);
-    });
+    const nextQuantity = Math.max(0, Math.min(next, product.stock));
+    const delta = nextQuantity - quantity;
+    desiredQuantity.current = nextQuantity;
+    setQuantityValue(nextQuantity);
+    dispatchCartChange(delta);
+    persistQuantity();
   }
 
   function remove() {
     setIsRemoving(true);
+    window.dispatchEvent(new CustomEvent("novafit:cart-count", { detail: -quantity }));
     startTransition(async () => {
       try {
-        await removeCartItem(item.id);
-      } finally {
+        const result = await removeCartItem(item.id);
+        if (result.ok) return;
+      } catch {
         setIsRemoving(false);
+        window.dispatchEvent(new CustomEvent("novafit:cart-count", { detail: quantity }));
+        return;
       }
+
+      setIsRemoving(false);
+      window.dispatchEvent(new CustomEvent("novafit:cart-count", { detail: quantity }));
     });
   }
 
@@ -78,13 +136,24 @@ export function CartItemRow({
                 .join(" · ")}
             </p>
           )}
+          {product.stock <= 5 ? (
+            <p
+              role="alert"
+              className={`mt-2 text-xs font-semibold ${product.stock === 0 ? "text-red-700" : "text-amber-800"}`}
+            >
+              {product.stock === 0
+                ? "Out of stock"
+                : `Low stock: only ${product.stock} left`}
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-neutral-500">{product.stock} in stock</p>
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 rounded-lg border border-neutral-200">
             <button
-              onClick={() => setQuantity(item.quantity - 1)}
-              disabled={isPending}
+              onClick={() => setQuantity(quantity - 1)}
               className="px-3 py-1 text-neutral-700 transition-colors hover:text-neutral-950 disabled:opacity-50"
               aria-label="Decrease quantity"
             >
@@ -94,8 +163,8 @@ export function CartItemRow({
               {quantity}
             </span>
             <button
-              onClick={() => setQuantity(item.quantity + 1)}
-              disabled={isPending || atMaxStock}
+              onClick={() => setQuantity(quantity + 1)}
+              disabled={atMaxStock}
               className="px-3 py-1 text-neutral-700 transition-colors hover:text-neutral-950 disabled:opacity-50"
               aria-label="Increase quantity"
               title={atMaxStock ? "No more stock available" : undefined}

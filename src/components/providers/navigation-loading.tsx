@@ -52,25 +52,12 @@ export function NavigationLoading() {
 
     return (
         <div
-            className="navigation-loading-backdrop fixed inset-0 z-[100] flex items-center justify-center"
+            className="navigation-loading-indicator fixed inset-x-0 top-0 z-[100]"
             role="status"
             aria-live="polite"
             aria-label="Loading page"
         >
-            <div className="navigation-loading-card">
-                <div className="navigation-loading-mark" aria-hidden="true">
-                    <span />
-                    <span />
-                    <span />
-                </div>
-                <div>
-                    <p className="navigation-loading-brand">NovaFit</p>
-                    <p className="navigation-loading-caption">Loading your next move</p>
-                </div>
-                <div className="navigation-loading-progress" aria-hidden="true">
-                    <span />
-                </div>
-            </div>
+            <span aria-hidden="true" />
         </div>
     );
 }

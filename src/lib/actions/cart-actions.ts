@@ -41,14 +41,15 @@ export async function addToCart(
     create: { userId },
   });
 
-  const existing = await prisma.cartItem.findUnique({
-    where: { cartId_productId: { cartId: cart.id, productId } },
-  });
-
-  const cartTotal = await prisma.cartItem.aggregate({
-    where: { cartId: cart.id },
-    _sum: { quantity: true },
-  });
+  const [existing, cartTotal] = await Promise.all([
+    prisma.cartItem.findUnique({
+      where: { cartId_productId: { cartId: cart.id, productId } },
+    }),
+    prisma.cartItem.aggregate({
+      where: { cartId: cart.id },
+      _sum: { quantity: true },
+    }),
+  ]);
   const currentTotal = cartTotal._sum.quantity ?? 0;
   const requestedQuantity = Number.isInteger(quantity) ? quantity : 0;
   const remainingForProduct = MAX_CART_QUANTITY - (currentTotal - (existing?.quantity ?? 0));
@@ -72,7 +73,6 @@ export async function addToCart(
   });
 
   revalidatePath("/cart");
-  revalidatePath("/", "layout"); // refreshes the navbar cart count
   return { ok: true };
 }
 
@@ -85,7 +85,13 @@ export async function updateCartItemQuantity(
 
   const item = await prisma.cartItem.findUnique({
     where: { id: cartItemId },
-    include: { cart: true, product: { select: { stock: true } } },
+    select: {
+      id: true,
+      cartId: true,
+      quantity: true,
+      cart: { select: { userId: true } },
+      product: { select: { stock: true } },
+    },
   });
 
   if (!item || item.cart.userId !== userId) {
@@ -94,6 +100,8 @@ export async function updateCartItemQuantity(
 
   if (quantity <= 0) {
     await prisma.cartItem.delete({ where: { id: cartItemId } });
+    revalidatePath("/cart");
+    return { ok: true };
   } else {
     if (!Number.isInteger(quantity)) {
       return { ok: false, error: "Quantity must be a whole number." };
@@ -117,8 +125,6 @@ export async function updateCartItemQuantity(
     });
   }
 
-  revalidatePath("/cart");
-  revalidatePath("/", "layout");
   return { ok: true };
 }
 
@@ -140,6 +146,5 @@ export async function removeCartItem(
   await prisma.cartItem.delete({ where: { id: cartItemId } });
 
   revalidatePath("/cart");
-  revalidatePath("/", "layout");
   return { ok: true };
 }

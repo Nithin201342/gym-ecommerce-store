@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ShoppingBag, Sparkles, Truck } from "lucide-react";
 import { getCurrentUserCart } from "@/lib/cart";
 import { getProducts } from "@/lib/products";
-import { formatCents } from "@/lib/format";
 import { CartItemRow } from "@/components/cart/cart-item-row";
+import { CartSubtotal } from "@/components/cart/cart-subtotal";
 import { ProductCard } from "@/components/product/product-card";
 
 export default async function CartPage() {
@@ -115,9 +115,7 @@ export default async function CartPage() {
                     <div className="mt-5 space-y-4 text-sm text-neutral-700">
                         <div className="flex items-center justify-between gap-3">
                             <span>Subtotal</span>
-                            <span className="font-medium text-neutral-950">
-                                {formatCents(subtotalCents)}
-                            </span>
+                            <CartSubtotal key={subtotalCents} initialCents={subtotalCents} />
                         </div>
                         <div className="flex items-center justify-between gap-3">
                             <span>Shipping</span>
