@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -16,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { NovaFitLogo } from "@/components/brand/novafit-logo";
+import { useSignOutAndRedirect } from "@/lib/auth-client";
 
 const LINKS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -66,6 +66,7 @@ function SidebarLinks({ pathname, onNavigate }: { pathname: string; onNavigate?:
 export function AdminSidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const signOutAndRedirect = useSignOutAndRedirect();
 
   return (
     <>
@@ -79,7 +80,7 @@ export function AdminSidebar() {
         </p>
         <SidebarLinks pathname={pathname} />
         <button
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={signOutAndRedirect}
           className="mt-auto flex w-full items-center gap-2.5 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left text-sm text-neutral-700 transition-colors hover:bg-neutral-100"
         >
           <LogOut className="h-4 w-4" />
@@ -133,7 +134,7 @@ export function AdminSidebar() {
               </div>
               <SidebarLinks pathname={pathname} onNavigate={() => setMobileOpen(false)} />
               <button
-                onClick={() => signOut({ callbackUrl: "/" })}
+                onClick={signOutAndRedirect}
                 className="mt-auto flex w-full items-center gap-2.5 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left text-sm text-neutral-700 transition-colors hover:bg-neutral-100"
               >
                 <LogOut className="h-4 w-4" />

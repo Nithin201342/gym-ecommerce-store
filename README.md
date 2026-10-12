@@ -399,6 +399,8 @@ Add these environment variables in the Vercel project settings. Add them for the
 - The real production application URL in `NEXTAUTH_URL`
 - Stripe live keys only after the application has been tested thoroughly
 
+Do not set `NEXTAUTH_URL` to `http://localhost:3000` in Production or Preview; use the deployment's public URL.
+
 Example:
 
 ```env

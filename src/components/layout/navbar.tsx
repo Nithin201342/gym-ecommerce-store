@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Menu, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { NovaFitLogo } from "@/components/brand/novafit-logo";
+import { useSignOutAndRedirect } from "@/lib/auth-client";
 
 const CATEGORY_LINKS = [
   { label: "Equipment", href: "/products?type=EQUIPMENT" },
@@ -23,6 +24,7 @@ function NavbarView({ cartCount }: { cartCount: number }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [displayCartCount, setDisplayCartCount] = useState(cartCount);
   const pathname = usePathname();
+  const signOutAndRedirect = useSignOutAndRedirect();
 
   useEffect(() => {
     function updateCartCount(event: Event) {
@@ -87,7 +89,7 @@ function NavbarView({ cartCount }: { cartCount: number }) {
                 </Link>
               )}
               <button
-                onClick={() => signOut({ callbackUrl: "/" })}
+                onClick={signOutAndRedirect}
                 className="navbar-control hidden border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 sm:block"
               >
                 Sign out
@@ -173,7 +175,7 @@ function NavbarView({ cartCount }: { cartCount: number }) {
                   {status === "authenticated" && (
                     <button
                       type="button"
-                      onClick={() => signOut({ callbackUrl: "/" })}
+                      onClick={signOutAndRedirect}
                       className="navbar-control mt-2 w-full border border-neutral-200 px-3 py-2.5 text-left text-sm text-neutral-700"
                     >
                       Sign out

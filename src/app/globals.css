@@ -23,6 +23,12 @@ body {
   font-family: var(--font-sans);
 }
 
+button:not(:disabled),
+a[href],
+[role="button"] {
+  cursor: pointer;
+}
+
 .hero-surface {
   min-height: calc(100svh - 4rem);
   background: #edf1eb;
