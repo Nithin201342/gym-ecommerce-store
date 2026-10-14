@@ -8,11 +8,21 @@ export default auth((req) => {
   const isBlocked = req.auth?.user?.isBlocked === true;
 
   if (isBlocked || (isAdminRoute && (!isLoggedIn || !isAdmin))) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
+    const response = NextResponse.redirect(new URL("/login", req.nextUrl));
+    if (isAdminRoute) {
+      response.headers.set("Cache-Control", "private, no-store, no-cache, max-age=0, must-revalidate");
+    }
+    return response;
   }
 
   if (req.nextUrl.pathname.startsWith("/checkout") && !isLoggedIn) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
+  }
+
+  if (isAdminRoute) {
+    const response = NextResponse.next();
+    response.headers.set("Cache-Control", "private, no-store, no-cache, max-age=0, must-revalidate");
+    return response;
   }
 });
 

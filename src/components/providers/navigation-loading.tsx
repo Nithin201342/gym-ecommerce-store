@@ -1,16 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export function NavigationLoading() {
     const pathname = usePathname();
+    const searchParams = useSearchParams().toString();
     const [isLoading, setIsLoading] = useState(false);
+    const resetTimer = useRef<number | null>(null);
 
     useEffect(() => {
-        const resetTimer = window.setTimeout(() => setIsLoading(false), 0);
-        return () => window.clearTimeout(resetTimer);
-    }, [pathname]);
+        if (resetTimer.current !== null) {
+            window.clearTimeout(resetTimer.current);
+            resetTimer.current = null;
+        }
+
+        const routeChangeTimer = window.setTimeout(() => setIsLoading(false), 0);
+        return () => window.clearTimeout(routeChangeTimer);
+    }, [pathname, searchParams]);
 
     useEffect(() => {
         function handleClick(event: MouseEvent) {
@@ -41,11 +48,22 @@ export function NavigationLoading() {
             }
 
             setIsLoading(true);
-            window.setTimeout(() => setIsLoading(false), 10000);
+            if (resetTimer.current !== null) {
+                window.clearTimeout(resetTimer.current);
+            }
+            resetTimer.current = window.setTimeout(() => {
+                setIsLoading(false);
+                resetTimer.current = null;
+            }, 10000);
         }
 
         document.addEventListener("click", handleClick, true);
-        return () => document.removeEventListener("click", handleClick, true);
+        return () => {
+            document.removeEventListener("click", handleClick, true);
+            if (resetTimer.current !== null) {
+                window.clearTimeout(resetTimer.current);
+            }
+        };
     }, []);
 
     if (!isLoading) return null;

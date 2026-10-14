@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { NavigationLoading } from "@/components/providers/navigation-loading";
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className="h-full antialiased" data-scroll-behavior="smooth">
       <body className="min-h-full flex flex-col bg-[#edf1eb]">
         <AuthSessionProvider>
-          <NavigationLoading />
+          <Suspense fallback={null}>
+            <NavigationLoading />
+          </Suspense>
           {children}
         </AuthSessionProvider>
       </body>

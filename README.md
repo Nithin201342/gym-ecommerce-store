@@ -170,6 +170,10 @@ The admin dashboard is available at:
 
 [http://localhost:3000/admin](http://localhost:3000/admin)
 
+Admin pages are checked on the server and sent with no-store cache headers.
+Restoring an admin page from browser history triggers a fresh request, so
+signing out cannot reveal a previously rendered admin screen.
+
 Admins can manage:
 
 - Products

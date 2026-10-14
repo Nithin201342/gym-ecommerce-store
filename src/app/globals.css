@@ -90,7 +90,6 @@ a[href],
   align-items: center;
   border-radius: 0.75rem;
   padding: 0.5rem 0.65rem;
-  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 .nav-icon {
@@ -99,17 +98,53 @@ a[href],
 
 .navbar-control {
   border-radius: 0.75rem;
-  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.nav-link,
+.nav-icon,
+.navbar-control {
+  transition:
+    color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .nav-link:hover,
 .nav-icon:hover,
-.navbar-control:hover,
-.nav-link[aria-current="page"] {
-  background: #d9f99d;
-  color: #263318;
+.navbar-control:not(.navbar-action):not(.navbar-primary):hover {
+  background: var(--color-emerald-500);
+  color: #17251e;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(64, 83, 28, 0.16);
+  box-shadow: 0 3px 10px rgba(35, 67, 50, 0.1);
+}
+
+.navbar-action:hover {
+  background: var(--color-emerald-500);
+  border-color: var(--color-emerald-500);
+  color: #17251e;
+}
+
+.navbar-primary:hover {
+  background: var(--color-emerald-500);
+  color: #17251e;
+}
+
+.nav-link[aria-current="page"]:not(:hover) {
+  background: #e6eee7;
+  color: #234332;
+}
+
+button.navbar-control:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(35, 67, 50, 0.1);
+}
+
+.nav-link:active,
+.nav-icon:active,
+.navbar-control:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(35, 67, 50, 0.08);
 }
 
 .nav-link:focus-visible,
@@ -119,28 +154,29 @@ a[href],
 }
 
 button:not(:disabled),
-a[class*="rounded-"]:not([class*="group"]):not(.nav-link):not(.navbar-control),
-button.navbar-control {
-  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, filter 180ms ease;
+a[class*="rounded-"]:not([class*="group"]):not(.nav-link):not(.navbar-control) {
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 button:not(:disabled):hover,
+a.navbar-control:hover,
 a[class*="rounded-"]:not([class*="group"]):not(.nav-link):not(.navbar-control):hover {
-  filter: brightness(1.04) saturate(1.08);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(23, 60, 45, 0.16);
+  background-color: var(--color-emerald-500);
+  border-color: var(--color-emerald-500);
+  color: #17251e;
+  transform: scale(1.015);
+  box-shadow: 0 5px 14px rgba(23, 60, 45, 0.12);
 }
 
 button:not(:disabled):active,
 a[class*="rounded-"]:not([class*="group"]):not(.nav-link):not(.navbar-control):active {
-  transform: translateY(0) scale(0.97);
-  box-shadow: 0 2px 6px rgba(23, 60, 45, 0.12);
-}
-
-.navbar-control:hover {
-  filter: none;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(64, 83, 28, 0.16);
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(23, 60, 45, 0.08);
 }
 
 button:focus-visible,

@@ -11,7 +11,7 @@ export default async function AdminLayout({
   // proxy.ts already blocks non-admins from /admin at the routing layer —
   // this check is defense-in-depth, and gives this layout the session.
   const session = await auth();
-  if (session?.user?.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN" || session.user.isBlocked) {
     redirect("/login");
   }
 

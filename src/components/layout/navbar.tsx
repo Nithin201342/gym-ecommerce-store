@@ -90,7 +90,7 @@ function NavbarView({ cartCount }: { cartCount: number }) {
               )}
               <button
                 onClick={signOutAndRedirect}
-                className="navbar-control hidden border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 sm:block"
+                className="navbar-control navbar-action hidden border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 sm:block"
               >
                 Sign out
               </button>
@@ -98,7 +98,7 @@ function NavbarView({ cartCount }: { cartCount: number }) {
           ) : (
             <Link
               href="/login"
-              className="navbar-control bg-neutral-950 px-4 py-2 text-sm font-medium text-white"
+              className="navbar-control navbar-primary bg-neutral-950 px-4 py-2 text-sm font-medium text-white"
             >
               Sign in
             </Link>
@@ -176,7 +176,7 @@ function NavbarView({ cartCount }: { cartCount: number }) {
                     <button
                       type="button"
                       onClick={signOutAndRedirect}
-                      className="navbar-control mt-2 w-full border border-neutral-200 px-3 py-2.5 text-left text-sm text-neutral-700"
+                      className="navbar-control navbar-action mt-2 w-full border border-neutral-200 px-3 py-2.5 text-left text-sm text-neutral-700"
                     >
                       Sign out
                     </button>

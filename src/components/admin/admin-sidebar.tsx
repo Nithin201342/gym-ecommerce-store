@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -67,6 +67,27 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const signOutAndRedirect = useSignOutAndRedirect();
+
+  useEffect(() => {
+    function concealPageBeforeCache(event: PageTransitionEvent) {
+      if (event.persisted) {
+        document.documentElement.style.visibility = "hidden";
+      }
+    }
+
+    function reloadRestoredAdminPage(event: PageTransitionEvent) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    }
+
+    window.addEventListener("pagehide", concealPageBeforeCache);
+    window.addEventListener("pageshow", reloadRestoredAdminPage);
+    return () => {
+      window.removeEventListener("pagehide", concealPageBeforeCache);
+      window.removeEventListener("pageshow", reloadRestoredAdminPage);
+    };
+  }, []);
 
   return (
     <>
