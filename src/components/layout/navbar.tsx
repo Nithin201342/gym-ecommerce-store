@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -22,7 +22,9 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
 function NavbarView({ cartCount }: { cartCount: number }) {
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [displayCartCount, setDisplayCartCount] = useState(cartCount);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
   const signOutAndRedirect = useSignOutAndRedirect();
 
@@ -35,6 +37,10 @@ function NavbarView({ cartCount }: { cartCount: number }) {
     window.addEventListener("novafit:cart-count", updateCartCount);
     return () => window.removeEventListener("novafit:cart-count", updateCartCount);
   }, []);
+
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#d9e1d7] bg-[#f4f7f1]/95 backdrop-blur">
@@ -54,11 +60,19 @@ function NavbarView({ cartCount }: { cartCount: number }) {
               {link.label}
             </Link>
           ))}
-          <Link href="/products" className="nav-link navbar-control text-sm text-neutral-700">About</Link>
-          <Link href="/products" aria-label="Search products" className="nav-icon navbar-control inline-flex h-9 w-9 items-center justify-center text-neutral-700"><Search size={17} /></Link>
         </div>
 
         <div className="flex items-center gap-4">
+          <button
+            type="button"
+            aria-label={searchOpen ? "Close product search" : "Search products"}
+            aria-expanded={searchOpen}
+            aria-controls="navbar-product-search"
+            onClick={() => setSearchOpen((open) => !open)}
+            className="nav-icon navbar-control inline-flex h-9 w-9 items-center justify-center text-neutral-700"
+          >
+            {searchOpen ? <X size={17} /> : <Search size={17} />}
+          </button>
           <Link
             href="/cart"
             aria-current={pathname === "/cart" ? "page" : undefined}
@@ -115,6 +129,35 @@ function NavbarView({ cartCount }: { cartCount: number }) {
           </button>
         </div>
 
+        {searchOpen && (
+          <form
+            id="navbar-product-search"
+            action="/products"
+            method="get"
+            role="search"
+            onSubmit={() => setSearchOpen(false)}
+            className="absolute left-4 right-4 top-full z-50 flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl md:left-1/2 md:right-auto md:w-[28rem] md:-translate-x-1/2"
+          >
+            <Search className="h-4 w-4 shrink-0 text-neutral-400" aria-hidden="true" />
+            <input
+              ref={searchInputRef}
+              type="search"
+              name="q"
+              maxLength={100}
+              required
+              placeholder="Search products..."
+              aria-label="Search products"
+              className="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm text-neutral-950 outline-none placeholder:text-neutral-400"
+            />
+            <button
+              type="submit"
+              className="rounded-xl bg-neutral-950 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
+              Search
+            </button>
+          </form>
+        )}
+
         <AnimatePresence>
           {mobileOpen && (
             <>
@@ -159,9 +202,6 @@ function NavbarView({ cartCount }: { cartCount: number }) {
                       {link.label}
                     </Link>
                   ))}
-                  <Link href="/products" onClick={() => setMobileOpen(false)} className="navbar-control w-full px-3 py-2.5 text-sm text-neutral-700">
-                    About
-                  </Link>
                   {status === "authenticated" && (
                     <Link href="/orders" onClick={() => setMobileOpen(false)} className="navbar-control w-full px-3 py-2.5 text-sm text-neutral-700">
                       Orders

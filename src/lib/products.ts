@@ -19,6 +19,7 @@ export async function getProducts(params?: {
   search?: string;
 }) {
   const { categorySlug, type, featured, search } = params ?? {};
+  const searchTerm = search?.trim().slice(0, 100);
 
   return prisma.product.findMany({
     where: {
@@ -26,8 +27,18 @@ export async function getProducts(params?: {
       ...(type ? { type } : {}),
       ...(featured ? { isFeatured: true } : {}),
       ...(categorySlug ? { category: { slug: categorySlug } } : {}),
-      ...(search
-        ? { name: { contains: search, mode: "insensitive" as const } }
+      ...(searchTerm
+        ? {
+            OR: [
+              { name: { contains: searchTerm, mode: "insensitive" as const } },
+              { description: { contains: searchTerm, mode: "insensitive" as const } },
+              {
+                category: {
+                  name: { contains: searchTerm, mode: "insensitive" as const },
+                },
+              },
+            ],
+          }
         : {}),
     },
     include: { category: true },

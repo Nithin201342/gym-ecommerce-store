@@ -30,7 +30,11 @@ export default async function ProductsPage({
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-neutral-950">
-          {type ? TYPE_LABELS[type] : "All Products"}
+          {params.q?.trim()
+            ? `Search results for “${params.q.trim()}”`
+            : type
+              ? TYPE_LABELS[type]
+              : "All Products"}
         </h1>
         <p className="mt-1 text-sm text-neutral-600">
           {products.length} {products.length === 1 ? "product" : "products"}
@@ -45,14 +49,20 @@ export default async function ProductsPage({
             </h2>
             <ul className="mb-6 space-y-1">
               <FilterLink
-                href="/products"
-                active={!type}
+                href={getFilterHref({
+                  q: params.q,
+                })}
+                active={!type && !params.category}
                 label="All"
               />
               {(Object.keys(TYPE_LABELS) as ProductType[]).map((t) => (
                 <FilterLink
                   key={t}
-                  href={`/products?type=${t}`}
+                  href={getFilterHref({
+                    q: params.q,
+                    type: t,
+                    category: params.category,
+                  })}
                   active={type === t}
                   label={TYPE_LABELS[t]}
                 />
@@ -66,7 +76,11 @@ export default async function ProductsPage({
               {categories.map((c) => (
                 <FilterLink
                   key={c.id}
-                  href={`/products?category=${c.slug}`}
+                  href={getFilterHref({
+                    q: params.q,
+                    type,
+                    category: c.slug,
+                  })}
                   active={params.category === c.slug}
                   label={c.name}
                 />
@@ -91,6 +105,23 @@ export default async function ProductsPage({
       </div>
     </div>
   );
+}
+
+function getFilterHref({
+  q,
+  type,
+  category,
+}: {
+  q?: string;
+  type?: ProductType;
+  category?: string;
+}) {
+  const query = new URLSearchParams();
+  if (q) query.set("q", q);
+  if (type) query.set("type", type);
+  if (category) query.set("category", category);
+  const search = query.toString();
+  return search ? `/products?${search}` : "/products";
 }
 
 function FilterLink({

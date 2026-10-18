@@ -65,6 +65,8 @@ AUTH_SECRET="replace-this-with-a-long-random-secret"
 NEXTAUTH_URL="http://localhost:3000"
 STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
 STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
+SMTP_USER="your.personal.gmail@gmail.com"
+SMTP_PASS="your-16-character-google-app-password"
 ```
 
 ### What these values mean
@@ -74,8 +76,34 @@ STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
 - `NEXTAUTH_URL`: The address where the app is running locally.
 - `STRIPE_SECRET_KEY`: Your Stripe secret key. Use a test key while developing.
 - `STRIPE_WEBHOOK_SECRET`: The secret used to verify Stripe webhook events.
+- `SMTP_USER`: The Gmail address used to send password reset emails.
+- `SMTP_PASS`: A Google App Password for that Gmail account. Do not use your normal Google password.
 
 Never commit `.env` to Git or share its contents publicly.
+
+### Configure password recovery email
+
+Password recovery sends a single-use link that expires after one hour using
+Gmail SMTP. No custom domain or paid email service is required for this
+low-volume project setup.
+
+1. Use a personal Gmail account. School or work Google accounts may block App
+   Passwords through organization policy.
+2. Enable 2-Step Verification for that Google account.
+3. Create an [App Password](https://support.google.com/accounts/answer/185833)
+   for the app and copy the generated password. Do not use your normal Google
+   account password.
+4. Set `SMTP_USER` to that Gmail address and `SMTP_PASS` to the App Password in
+   `.env`. Spaces in the copied App Password are okay.
+5. Set `NEXTAUTH_URL` to the app's public origin (use
+   `http://localhost:3000` locally), then restart the development server.
+
+The app verifies SMTP connectivity before processing a reset request. If this
+check fails, the form shows an SMTP setup error and the server terminal logs
+details. The final message remains generic when a particular email cannot be
+delivered, to avoid revealing which addresses have accounts. Check the server
+terminal and Gmail's Sent folder if a reset message does not arrive. Gmail is
+free but intended for demos and low-volume use, not production bulk email.
 
 ### Generate an Auth Secret
 
