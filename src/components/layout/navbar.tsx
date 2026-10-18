@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Menu, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -23,9 +23,11 @@ function NavbarView({ cartCount }: { cartCount: number }) {
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [displayCartCount, setDisplayCartCount] = useState(cartCount);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
   const signOutAndRedirect = useSignOutAndRedirect();
 
   useEffect(() => {
@@ -41,6 +43,15 @@ function NavbarView({ cartCount }: { cartCount: number }) {
   useEffect(() => {
     if (searchOpen) searchInputRef.current?.focus();
   }, [searchOpen]);
+
+  function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) return;
+
+    setSearchOpen(false);
+    router.push(`/products?q=${encodeURIComponent(query)}`);
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#d9e1d7] bg-[#f4f7f1]/95 backdrop-blur">
@@ -132,19 +143,18 @@ function NavbarView({ cartCount }: { cartCount: number }) {
         {searchOpen && (
           <form
             id="navbar-product-search"
-            action="/products"
-            method="get"
             role="search"
-            onSubmit={() => setSearchOpen(false)}
+            onSubmit={handleSearchSubmit}
             className="absolute left-4 right-4 top-full z-50 flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl md:left-1/2 md:right-auto md:w-[28rem] md:-translate-x-1/2"
           >
             <Search className="h-4 w-4 shrink-0 text-neutral-400" aria-hidden="true" />
             <input
               ref={searchInputRef}
               type="search"
-              name="q"
               maxLength={100}
               required
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search products..."
               aria-label="Search products"
               className="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm text-neutral-950 outline-none placeholder:text-neutral-400"
