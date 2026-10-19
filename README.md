@@ -428,7 +428,8 @@ Add these environment variables in the Vercel project settings. Add them for the
 
 - A production MongoDB connection string
 - A production `AUTH_SECRET`
-- The real production application URL in `NEXTAUTH_URL`
+- `SMTP_USER` and `SMTP_PASS` for password recovery emails
+- The real production application URL in `NEXTAUTH_URL` (password recovery can use Vercel's `VERCEL_URL` as a fallback)
 - Stripe live keys only after the application has been tested thoroughly
 
 Do not set `NEXTAUTH_URL` to `http://localhost:3000` in Production or Preview; use the deployment's public URL.
@@ -439,9 +440,16 @@ Example:
 DATABASE_URL="mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/novafit?retryWrites=true&w=majority"
 AUTH_SECRET="your-production-random-secret"
 NEXTAUTH_URL="https://your-domain.com"
+SMTP_USER="your.personal.gmail@gmail.com"
+SMTP_PASS="your-16-character-google-app-password"
 STRIPE_SECRET_KEY="sk_live_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
 ```
+
+Use a Google App Password for `SMTP_PASS`, not your regular Google password.
+In Vercel, add these values under **Settings > Environment Variables** for each
+environment that needs password recovery, then redeploy. If `NEXTAUTH_URL` is
+not set, the app can use Vercel's `VERCEL_URL` to build reset links.
 
 ### MongoDB Atlas and Vercel
 

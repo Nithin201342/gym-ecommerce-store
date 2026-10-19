@@ -24,9 +24,30 @@ export async function POST(request: Request) {
 
   const smtpUser = process.env.SMTP_USER?.trim();
   const smtpPass = process.env.SMTP_PASS?.replace(/\s/g, "");
-  const siteUrl = process.env.NEXTAUTH_URL;
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  const configuredSiteUrl = process.env.NEXTAUTH_URL?.trim();
+  const isVercelLocalhostUrl = (() => {
+    if (!process.env.VERCEL || !configuredSiteUrl) return false;
+    try {
+      return new URL(configuredSiteUrl).hostname === "localhost";
+    } catch {
+      return false;
+    }
+  })();
+  const vercelSiteUrl = vercelUrl ? `https://${vercelUrl}` : undefined;
+  const siteUrl = isVercelLocalhostUrl
+    ? vercelSiteUrl
+    : configuredSiteUrl || vercelSiteUrl;
+  const missingConfig = [
+    !smtpUser && "SMTP_USER",
+    !smtpPass && "SMTP_PASS",
+    !siteUrl && "NEXTAUTH_URL (or VERCEL_URL)",
+  ].filter((name): name is string => Boolean(name));
   if (!smtpUser || !smtpPass || !siteUrl) {
-    console.error("Password recovery SMTP is not configured.");
+    console.error(
+      "Password recovery is not configured. Missing environment variables:",
+      missingConfig
+    );
     return NextResponse.json(
       { error: "Password recovery email is not configured. Check the server setup." },
       { status: 503 }
